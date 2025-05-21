@@ -31,6 +31,7 @@ implement a solution in the package info.jab.latency from src. Create a solution
 - Improve pom.xml
 - Improve the tests
 - Migrate to assertj
+- Extract samples from oas d
 
 ## How to test in local?
 
