@@ -30,6 +30,8 @@ implement a solution in the package info.jab.latency from src. Create a solution
 PENDING
 ```
 
+## How to test in local?
+
 ## References
 
 - https://github.com/jabrena/cursor-rules-java
