@@ -26,9 +26,11 @@ implement a solution in the package info.jab.latency from src. Create a solution
 
 4. Begin the refactoring
 
-```bash
-PENDING
-```
+- Improve the design
+- Simplify the solution desing for the main class, use a interface
+- Improve pom.xml
+- Improve the tests
+- Migrate to assertj
 
 ## How to test in local?
 
@@ -40,3 +42,4 @@ PENDING
 
 - https://github.com/jabrena/cursor-rules-java
 - https://github.com/jabrena/latency-problems
+- https://editor-next.swagger.io/

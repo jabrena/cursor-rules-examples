@@ -1,28 +1,46 @@
 package info.jab.latency.service;
 
+import java.math.BigInteger;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.math.BigInteger;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class NameConverterTest {
 
     private final NameConverter nameConverter = new NameConverter();
 
     @Test
+    @SuppressWarnings("NullAway")
+    @DisplayName("Given a null name, when converting to decimal, then return zero")
     void convertToDecimal_nullName_shouldReturnZero() {
-        assertEquals(BigInteger.ZERO, nameConverter.convertToDecimal(null));
+        // Given
+        String name = null;
+
+        // When
+        BigInteger result = nameConverter.convertToDecimal(name);
+
+        // Then
+        assertThat(result).isEqualTo(BigInteger.ZERO);
     }
 
     @Test
+    @DisplayName("Given an empty name, when converting to decimal, then return zero")
     void convertToDecimal_emptyName_shouldReturnZero() {
-        assertEquals(BigInteger.ZERO, nameConverter.convertToDecimal(""));
+        // Given
+        String name = "";
+
+        // When
+        BigInteger result = nameConverter.convertToDecimal(name);
+
+        // Then
+        assertThat(result).isEqualTo(BigInteger.ZERO);
     }
 
     @ParameterizedTest
+    @DisplayName("Given various god names, when converting to decimal, then return correct decimal value")
     @CsvSource({
             "Zeus, 122101117115",
             "Hera, 10410111497",
@@ -47,19 +65,41 @@ class NameConverterTest {
             "Njord, 110106111114100" // Starts with 'n'
     })
     void convertToDecimal_variousNames_shouldReturnCorrectDecimal(String name, String expectedDecimalStr) {
+        // Given
         BigInteger expected = new BigInteger(expectedDecimalStr);
-        assertEquals(expected, nameConverter.convertToDecimal(name));
+
+        // When
+        BigInteger result = nameConverter.convertToDecimal(name);
+
+        // Then
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
+    @DisplayName("Given a name with spaces, when converting to decimal, then handle correctly")
     void convertToDecimal_nameWithSpaces_shouldHandleCorrectly() {
-        // Example: "New God" -> "new god" -> n(110)e(101)w(119) (32)g(103)o(111)d(100) -> "11010111932103111100"
-        assertEquals(new BigInteger("11010111932103111100"), nameConverter.convertToDecimal("New God"));
+        // Given
+        String nameWithSpaces = "New God";
+        BigInteger expected = new BigInteger("11010111932103111100"); // "New God" -> "new god" -> n(110)e(101)w(119) (32)g(103)o(111)d(100)
+
+        // When
+        BigInteger result = nameConverter.convertToDecimal(nameWithSpaces);
+
+        // Then
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
+    @DisplayName("Given a name with numbers, when converting to decimal, then handle correctly")
     void convertToDecimal_nameWithNumbers_shouldHandleCorrectly() {
-        // Example: "God1" -> "god1" -> g(103)o(111)d(100)1(49) -> "10311110049"
-        assertEquals(new BigInteger("10311110049"), nameConverter.convertToDecimal("God1"));
+        // Given
+        String nameWithNumbers = "God1";
+        BigInteger expected = new BigInteger("10311110049"); // "God1" -> "god1" -> g(103)o(111)d(100)1(49)
+
+        // When
+        BigInteger result = nameConverter.convertToDecimal(nameWithNumbers);
+
+        // Then
+        assertThat(result).isEqualTo(expected);
     }
-} 
+}

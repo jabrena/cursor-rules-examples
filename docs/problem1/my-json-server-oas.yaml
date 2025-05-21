@@ -28,7 +28,30 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExternalGod'
+                  type: string
+              examples:
+                success:
+                  value:
+                    - "Zeus"
+                    - "Hera"
+                    - "Poseidon"
+                    - "Demeter"
+                    - "Ares"
+                    - "Athena"
+                    - "Apollo"
+                    - "Artemis"
+                    - "Hephaestus"
+                    - "Aphrodite"
+                    - "Hermes"
+                    - "Dionysus"
+                    - "Hades"
+                    - "Hypnos"
+                    - "Nike"
+                    - "Janus"
+                    - "Nemesis"
+                    - "Iris"
+                    - "Hecate"
+                    - "Tyche"
         '500':
           description: Internal server error
         '504':
@@ -48,7 +71,16 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExternalGod'
+                  type: string
+              examples:
+                success:
+                  value:
+                    - "Venus"
+                    - "Mars"
+                    - "Neptun"
+                    - "Mercury"
+                    - "Pluto"
+                    - "Jupiter"
         '500':
           description: Internal server error
         '504':
@@ -68,7 +100,20 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExternalGod'
+                  type: string
+              examples:
+                success:
+                  value:
+                    - "Baldur"
+                    - "Freyja"
+                    - "Heimdall"
+                    - "Frigga"
+                    - "Hel"
+                    - "Loki"
+                    - "Njord"
+                    - "Odin"
+                    - "Thor"
+                    - "Tyr"
         '500':
           description: Internal server error
         '504':
@@ -76,10 +121,4 @@ paths:
 components:
   schemas:
     ExternalGod:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the god
-      required:
-        - name
+      type: string
