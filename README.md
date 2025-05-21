@@ -32,6 +32,10 @@ PENDING
 
 ## How to test in local?
 
+```
+./mvnw clean verify
+```
+
 ## References
 
 - https://github.com/jabrena/cursor-rules-java
