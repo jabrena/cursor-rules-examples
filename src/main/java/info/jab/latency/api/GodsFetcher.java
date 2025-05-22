@@ -1,19 +1,22 @@
 package info.jab.latency.api;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
- * Interface for fetching God entities asynchronously from an API.
+ * Interface for fetching God entities from an API.
  */
 public interface GodsFetcher {
 
     /**
-     * Fetches a list of Gods asynchronously from the specified API URL.
+     * Fetches a list of God names synchronously from the specified API URL.
      *
      * @param apiUrl The URL of the API to fetch gods from.
-     * @return A CompletableFuture that, when completed, will contain a list of God objects.
-     *         The list will be empty if an error occurs or no gods are found.
+     * @return A list of God names.
+     *         The list will be empty if an error occurs (e.g., network issue, timeout, parsing error)
+     *         or no gods are found.
+     * @throws IOException If an I/O error occurs when sending or receiving.
+     * @throws InterruptedException If the operation is interrupted.
      */
-    CompletableFuture<List<String>> fetchGodsAsync(String apiUrl);
+    List<String> fetchGods(String apiUrl) throws IOException, InterruptedException;
 }

@@ -205,6 +205,7 @@
                     -XepOpt:NullAway:AssertsEnabled=true \
                     -XepOpt:NullAway:AnnotatedPackages=info.jab.latency
                 </arg>
+                <arg>--enable-preview</arg>
             </compilerArgs>
             <annotationProcessorPaths>
                 <path>
@@ -219,12 +220,54 @@
                 </path>
             </annotationProcessorPaths>
         </configuration>
+        <!-- Avoid issues in tests if you verify a class using a preview feature-->
+        <executions>
+            <execution>
+                <id>default-testCompile</id>
+                <phase>test-compile</phase>
+                <goals>
+                    <goal>testCompile</goal>
+                </goals>
+                <configuration>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                        <arg>-Xlint:all</arg>
+                        <arg>-Werror</arg>
+                        <arg>-Xlint:-preview</arg>
+                        <arg>-XDcompilePolicy=simple</arg>
+                        <arg>--should-stop=ifError=FLOW</arg>
+                        <arg>-Xplugin:ErrorProne \
+                            -Xep:NullAway:ERROR \
+                            -XepOpt:NullAway:JSpecifyMode=true \
+                            -XepOpt:NullAway:TreatGeneratedAsUnannotated=true \
+                            -XepOpt:NullAway:CheckOptionalEmptiness=true \
+                            -XepOpt:NullAway:HandleTestAssertionLibraries=true \
+                            -XepOpt:NullAway:AssertsEnabled=true \
+                            -XepOpt:NullAway:AnnotatedPackages=info.jab.latency
+                        </arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${error-prone.version}</version>
+                        </path>
+                        <path>
+                            <groupId>com.uber.nullaway</groupId>
+                            <artifactId>nullaway</artifactId>
+                            <version>${nullaway.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-plugins-surefire.version}</version>
         <configuration>
+            <argLine>--enable-preview</argLine>
             <skipAfterFailureCount>1</skipAfterFailureCount>
             <includes>
                 <include>**/*Test.java</include>
@@ -239,6 +282,7 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${maven-plugins-failsafe.version}</version>
         <configuration>
+            <argLine>--enable-preview</argLine>
             <includes>
                 <include>**/*IT.java</include>
             </includes>
