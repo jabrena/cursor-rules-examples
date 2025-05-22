@@ -1,6 +1,6 @@
 Feature: Consume some REST God Services
 
-Background: Decimal representation of `Zeus` is 122101117115
+Background: Decimal representation of `Zeus` is 90101117115
 
 Scenario: Consume the APIs in a Happy path scenario
     Given a list of REST API about Greek, Roman & Nordic

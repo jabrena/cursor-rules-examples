@@ -35,7 +35,7 @@ implement a solution in the package info.jab.latency from src. Create a solution
 
 ## How to test in local?
 
-```
+```bash
 ./mvnw clean verify
 ```
 
