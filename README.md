@@ -73,8 +73,11 @@ Verify the changes with the command: ./mvnw clean verify
 ```
 
 4. [ ] Refactoring
+
 4.1 [x] Improve the design
+
 4.3 [x] Improve pom.xml
+
 4.4 [ ] Improve the tests
 
 ## How to test in local?
