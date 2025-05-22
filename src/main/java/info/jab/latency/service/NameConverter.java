@@ -12,18 +12,6 @@ import org.jspecify.annotations.NonNull;
  */
 public class NameConverter implements DecimalValueConverter {
 
-    private BigInteger convert(@NonNull String name) {
-        if (Objects.isNull(name) || name.isEmpty()) {
-            return BigInteger.ZERO;
-        }
-
-        String charValuesString = name.chars()
-                                      .mapToObj(String::valueOf)
-                                      .collect(Collectors.joining());
-
-        return new BigInteger(charValuesString);
-    }
-
     /**
      * Converts the given name to its decimal representation as a BigInteger.
      * Each character in the lowercase version of the name is converted to its ASCII integer value,
@@ -34,6 +22,14 @@ public class NameConverter implements DecimalValueConverter {
      */
     @Override
     public BigInteger convertToDecimal(@NonNull String name) {
-        return convert(name);
+        if (Objects.isNull(name) || name.isEmpty()) {
+            return BigInteger.ZERO;
+        }
+
+        String charValuesString = name.chars()
+                                      .mapToObj(String::valueOf)
+                                      .collect(Collectors.joining());
+
+        return new BigInteger(charValuesString);
     }
 }

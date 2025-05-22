@@ -5,17 +5,18 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.StructuredTaskScope;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import info.jab.latency.api.GodApiClient;
 import info.jab.latency.api.GodsFetcher;
 import info.jab.latency.service.DecimalValueConverter;
 import info.jab.latency.service.NameConverter;
 
+//Using a preview feature, so we need to suppress the warning
+@SuppressWarnings("preview")
 public class LatencyProblemSolver implements LatencyService {
 
     private final GodsFetcher godApiClient;
@@ -30,27 +31,35 @@ public class LatencyProblemSolver implements LatencyService {
 
     @Override
     public BigInteger solve() {
-        // Equivalent to calling calculateSumForGodsStartingWith("") and blocking
-        return fetchAllGodsFromApis()
-                .thenApply(godNames -> filterGodsByNameStartsWith(godNames)) // Empty prefix means all gods
-                .thenApply(this::convertGodNamesToDecimal)
-                .thenApply(this::sumDecimalValues)
-                .join(); // Block and get the result
+        // The main logic now uses the structured concurrency result directly
+        try {
+            List<String> godNames = fetchAllGodsFromApisStructured();
+            List<String> filteredGodNames = filterGodsByNameStartsWith(godNames);
+            List<BigInteger> decimalValues = convertGodNamesToDecimal(filteredGodNames);
+            return sumDecimalValues(decimalValues);
+        } catch (InterruptedException | ExecutionException e) {
+            // Log the exception or handle it as appropriate for the application
+            // For now, rethrow as a runtime exception or return a default value
+            Thread.currentThread().interrupt(); // Preserve interrupt status
+            throw new RuntimeException("Failed to solve latency problem due to interruption or execution error", e);
+        }
     }
 
-    private CompletableFuture<List<String>> fetchAllGodsFromApis() {
-        List<CompletableFuture<List<String>>> futures = IntStream.range(0, apiUrls.size())
-                .mapToObj(i -> {
-                    String apiUrl = apiUrls.get(i);
-                    return godApiClient.fetchGodsAsync(apiUrl);
-                })
-                .collect(Collectors.toList());
+    // New method using StructuredTaskScope
+    private List<String> fetchAllGodsFromApisStructured() throws InterruptedException, ExecutionException {
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            List<StructuredTaskScope.Subtask<List<String>>> subtasks = apiUrls.stream()
+                    .map(apiUrl -> scope.fork(() -> godApiClient.fetchGods(apiUrl)))
+                    .toList();
 
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0]))
-                .thenApply(v -> futures.stream()
-                        .map(CompletableFuture::join)
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList()));
+            scope.join().throwIfFailed(); // Wait for all tasks and throw if any failed
+
+            // Collect results from all subtasks
+            return subtasks.stream()
+                    .map(StructuredTaskScope.Subtask::get)
+                    .flatMap(Collection::stream)
+                    .toList();
+        }
     }
 
     private Predicate<String> godStartingByn = s -> s.toLowerCase(Locale.ROOT).charAt(0) == 'n';
@@ -63,18 +72,12 @@ public class LatencyProblemSolver implements LatencyService {
     }
 
     private List<BigInteger> convertGodNamesToDecimal(List<String> godNames) {
-        if (Objects.isNull(godNames)) {
-            return List.of();
-        }
         return godNames.stream()
                 .map(nameConverter::convertToDecimal)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private BigInteger sumDecimalValues(List<BigInteger> decimalValues) {
-        if (Objects.isNull(decimalValues)) {
-            return BigInteger.ZERO;
-        }
         return decimalValues.stream()
                 .reduce(BigInteger.ZERO, BigInteger::add);
     }
