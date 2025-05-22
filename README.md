@@ -11,7 +11,8 @@ Probe the help of the **Cursor rules for Java** with non trivial Java problems.
 Have a conversation with the LLM to improve the initial requirements.
 
 ```bash
-How to improve this gherkin? What questions do you consider useful to be anwered in order to update this gherkin file?
+How to improve this gherkin? What questions do you consider useful
+to be answered in order to update this gherkin file?
 ```
 
 2. [x] Create a Maven project
@@ -27,7 +28,10 @@ jbang setup@jabrena init --maven
 Review if the solution require some initial intefaces to be used for the tests.
 
 ```bash
-implement an acceptance tests in the package info.jab.latency for the scenario: "Identify the Greek god with the most literature on Wikipedia". Use the open api to extract the examples to the tests using Wiremock and run the tests against an empty implementation of the interface.
+implement an acceptance tests in the package info.jab.latency for the scenario:
+"Identify the Greek god with the most literature on Wikipedia".
+Use the open api to extract the examples to the tests using Wiremock
+and run the tests against an empty implementation of the interface.
 ```
 
 ```xml
@@ -48,7 +52,9 @@ implement an acceptance tests in the package info.jab.latency for the scenario: 
 Implement the solution.
 
 ```bash
-implement a solution in the package info.jab.latency from src. Create a solution and later add test classes. Verify the changes with the command: ./mvnw clean verify
+Implement a solution in the package info.jab.latency from src.
+Create a solution and later add test classes.
+Verify the changes with the command: ./mvnw clean verify
 ```
 
 4. Begin the refactoring
@@ -70,5 +76,6 @@ implement a solution in the package info.jab.latency from src. Create a solution
 
 - https://github.com/jabrena/cursor-rules-java
 - https://github.com/jabrena/latency-problems
-- https://github.com/jabrena/latency-rosetta-stone
+- https://github.com/jabrena/latency-rosetta-stone (Hints)
 - https://editor-next.swagger.io/
+- https://www.plantuml.com/plantuml/uml/
