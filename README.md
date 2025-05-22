@@ -27,6 +27,8 @@ jbang setup@jabrena init --maven
 
 Review if the solution require some initial intefaces to be used for the tests.
 
+![](./docs/double-loop-tdd.png)
+
 ```bash
 Implement an acceptance tests in the package info.jab.latency for the scenario:
 "Identify the Greek god with the most literature on Wikipedia".
@@ -88,3 +90,4 @@ Verify the changes with the command: ./mvnw clean verify
 - https://github.com/jabrena/latency-rosetta-stone (Hints)
 - https://editor-next.swagger.io/
 - https://www.plantuml.com/plantuml/uml/
+- https://cekrem.github.io/posts/double-loop-tdd-blog-engine-pt2/
