@@ -1,5 +1,6 @@
 package info.jab.latency.solution;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +41,7 @@ public class GreekGodsLiteratureAnalyzerAcceptanceTest {
 
         // Stubs for Wikipedia pages
         stubWikipediaPage("Zeus", "Content for Zeus page. Length 15023", 15023);
-        stubWikipediaPage("Hera", "Content for Hera page. Length 15000", 15000); // Adjusted Hera
+        stubWikipediaPage("Hera", "Content for Hera page. Length 16000", 16000); // Adjusted Hera to 16000 for tie
         stubWikipediaPage("Poseidon", "Content for Poseidon. Length 12000", 12000);
         stubWikipediaPage("Demeter", "Content for Demeter. Length 11000", 11000);
         stubWikipediaPage("Ares", "Content for Ares. Length 10000", 10000);
@@ -95,14 +96,41 @@ public class GreekGodsLiteratureAnalyzerAcceptanceTest {
         String wikipediaUrlTemplate = wireMockServer.baseUrl() + WIKIPEDIA_API_PATH_PREFIX + "{greekGod}";
         List<String> apiEndpoints = List.of(greekGodsApiUrl, wikipediaUrlTemplate);
 
-        List<String> expected = List.of("Apollo"); // Changed expected to Apollo
+        List<String> expected = new ArrayList<>(List.of("Apollo", "Hera")); // Apollo and Hera have the same length
+
+        // When
+        List<String> actualResult = new ArrayList<>(analyzer.solve(apiEndpoints));
+
+        // Then
+        System.out.println("Actual result (mocked): " + actualResult);
+        System.out.println("Expected result (mocked): " + expected);
+        // Sort lists to ensure order-independent comparison
+        java.util.Collections.sort(actualResult);
+        java.util.Collections.sort(expected);
+        assertEquals(expected, actualResult);
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenGreekGodsAPIReturnsEmpty() {
+        // Given
+        // Override the default stub for the Greek Gods API to return an empty list
+        wireMockServer.stubFor(get(urlEqualTo(GREEK_GODS_API_PATH))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("[]"))); // Empty JSON array
+
+        String greekGodsApiUrl = wireMockServer.baseUrl() + GREEK_GODS_API_PATH;
+        String wikipediaUrlTemplate = wireMockServer.baseUrl() + WIKIPEDIA_API_PATH_PREFIX + "{greekGod}";
+        List<String> apiEndpoints = List.of(greekGodsApiUrl, wikipediaUrlTemplate);
+
+        List<String> expected = List.of();
 
         // When
         List<String> actualResult = analyzer.solve(apiEndpoints);
 
         // Then
-        System.out.println("Actual result (mocked): " + actualResult);
-        System.out.println("Expected result (mocked): " + expected);
+        System.out.println("Actual result (empty API response): " + actualResult);
+        System.out.println("Expected result (empty API response): " + expected);
         assertEquals(expected, actualResult);
     }
 

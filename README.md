@@ -72,13 +72,19 @@ Update the acceptance tests pointing to the real endpoints.
 Verify the changes with the command: ./mvnw clean verify
 ```
 
-4. [ ] Refactoring
+4. [x] Refactoring
 
-4.1 [x] Improve the design
+Improve the running solution
 
-4.3 [x] Improve pom.xml
+- 4.1 [x] Improve the design
 
-4.4 [ ] Improve the tests
+- 4.3 [x] Improve pom.xml
+
+- 4.4 [x] Improve the tests
+
+```bash
+Improve the tests@test verify the changes with ./mvnw clean test
+```
 
 ## How to test in local?
 
