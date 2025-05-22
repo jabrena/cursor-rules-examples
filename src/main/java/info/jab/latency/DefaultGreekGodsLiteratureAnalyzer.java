@@ -1,67 +1,83 @@
 package info.jab.latency;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-// Jackson imports for ObjectMapper
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import info.jab.latency.client.DefaultGreekGodsClient;
+import info.jab.latency.client.DefaultWikipediaClient;
+import info.jab.latency.client.GreekGodsClient;
+import info.jab.latency.client.WikipediaClient;
+
 /**
- * Default empty implementation of GreekGodsLiteratureAnalyzer.
+ * Default implementation of GreekGodsLiteratureAnalyzer.
  * This implementation is intended to be filled out to solve the problem.
  */
 public class DefaultGreekGodsLiteratureAnalyzer implements GreekGodsLiteratureAnalyzer {
 
-    private static final HttpClient client = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.NORMAL)
-            .build();
+    private static final Logger logger = LoggerFactory.getLogger(DefaultGreekGodsLiteratureAnalyzer.class);
 
-    // Add ObjectMapper instance
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final GreekGodsClient greekGodsClient;
+    private final WikipediaClient wikipediaClient;
+
+    // Constructor for dependency injection
+    public DefaultGreekGodsLiteratureAnalyzer(GreekGodsClient greekGodsClient, WikipediaClient wikipediaClient) {
+        this.greekGodsClient = greekGodsClient;
+        this.wikipediaClient = wikipediaClient;
+    }
+
+    // Default constructor that creates default clients
+    public DefaultGreekGodsLiteratureAnalyzer() {
+        HttpClient httpClient = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        this.greekGodsClient = new DefaultGreekGodsClient(httpClient, objectMapper);
+        this.wikipediaClient = new DefaultWikipediaClient(httpClient);
+    }
 
     @Override
     public List<String> solve(List<String> apiEndpoints) {
         if (apiEndpoints == null || apiEndpoints.size() < 2) {
-            System.err.println("Error: API endpoints not configured correctly.");
+            logger.error("API endpoints not configured correctly. Expected at least 2, got: {}", apiEndpoints != null ? apiEndpoints.size() : "null");
             return Collections.emptyList();
         }
 
         String greekGodsApiUrl = apiEndpoints.get(0);
         String wikipediaUrlTemplate = apiEndpoints.get(1);
 
-        List<String> gods = fetchGreekGods(greekGodsApiUrl);
+        logger.debug("Fetching Greek gods from: {}", greekGodsApiUrl);
+        List<String> gods = greekGodsClient.fetchGreekGods(greekGodsApiUrl);
         if (gods.isEmpty()) {
-            // System.err.println("Debug: No Greek gods fetched from: " + greekGodsApiUrl);
+            logger.warn("No Greek gods fetched from: {}. Returning empty list.", greekGodsApiUrl);
             return Collections.emptyList();
         }
 
         Map<String, Integer> literatureLengths = new HashMap<>();
         for (String god : gods) {
             // Basic URL encoding for god name to handle potential special characters in names
-            String encodedGodName = URI.create(god).toASCIIString();
+            String encodedGodName = URI.create(god).toASCIIString(); // Consider a more robust encoding if names are complex
             String wikipediaPageUrl = wikipediaUrlTemplate.replace("{greekGod}", encodedGodName);
-            int length = fetchWikipediaPageLength(wikipediaPageUrl);
+            logger.debug("Fetching Wikipedia page length for god: {}, URL: {}", god, wikipediaPageUrl);
+            int length = wikipediaClient.fetchWikipediaPageLength(wikipediaPageUrl);
             literatureLengths.put(god, length);
         }
 
-        if (literatureLengths.isEmpty()) {
+        if (literatureLengths.isEmpty() && !gods.isEmpty()) {
              // This case might occur if all gods list entries lead to errors in fetching page lengths
-            // System.err.println("Debug: Literature lengths map is empty after fetching.");
+            logger.warn("Literature lengths map is empty after fetching, although gods were found. This could mean all Wikipedia page fetches failed.");
+            return Collections.emptyList();
+        } else if (literatureLengths.isEmpty()) {
+            logger.warn("No literature lengths found and no gods were initially fetched or processed.");
             return Collections.emptyList();
         }
 
@@ -75,83 +91,17 @@ public class DefaultGreekGodsLiteratureAnalyzer implements GreekGodsLiteratureAn
         // If all pages had 0 length (e.g. all 404s or errors), maxLength will be 0.
         // In this specific problem, if max length is 0, it means no god had discoverable literature.
         if (maxLength == 0) {
-            // System.err.println("Debug: Max literature length is 0. No gods with literature found or all pages were empty/failed.");
+            logger.info("Max literature length is 0. No gods with literature found or all pages were empty/failed.");
             return Collections.emptyList(); // Return empty list if no one has literature > 0
         }
 
         final int finalMaxLength = maxLength;
-        List<String> godsWithMostLiterature = literatureLengths.entrySet().stream()
+        List<String> result = literatureLengths.entrySet().stream()
                 .filter(entry -> entry.getValue() == finalMaxLength)
                 .map(Map.Entry::getKey)
-                .toList();
+                .collect(Collectors.toList());
 
-        // System.out.println("Debug: Gods with most literature (" + finalMaxLength + "): " + godsWithMostLiterature);
-        return godsWithMostLiterature;
-    }
-
-    private List<String> fetchGreekGods(String apiUrl) {
-        HttpRequest request;
-        try {
-            request = HttpRequest.newBuilder()
-                    .uri(new URI(apiUrl))
-                    .GET()
-                    .build();
-        } catch (URISyntaxException e) {
-            System.err.println("Error: Invalid Greek Gods API URL syntax: " + apiUrl + " - " + e.getMessage());
-            return Collections.emptyList();
-        }
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            if (response.statusCode() == 200) {
-                return parseJsonArrayOfStrings(response.body());
-            } else {
-                System.err.println("Error fetching Greek gods: " + response.statusCode() + " from " + apiUrl);
-                return Collections.emptyList();
-            }
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Exception fetching Greek gods from " + apiUrl + ": " + e.getMessage());
-            // e.printStackTrace(); // Keep for deeper debugging if necessary
-            return Collections.emptyList();
-        }
-    }
-
-    // Basic JSON array of strings parser
-    private List<String> parseJsonArrayOfStrings(String jsonBody) {
-        try {
-            // Use ObjectMapper to read the JSON array into a List<String>
-            return objectMapper.readValue(jsonBody, new TypeReference<List<String>>() {});
-        } catch (IOException e) {
-            System.err.println("Error parsing JSON array: " + jsonBody + " - " + e.getMessage());
-            // e.printStackTrace(); // Keep for deeper debugging if necessary
-            return Collections.emptyList();
-        }
-    }
-
-    private int fetchWikipediaPageLength(String pageUrl) {
-        HttpRequest request;
-        try {
-            request = HttpRequest.newBuilder()
-                    .uri(new URI(pageUrl))
-                    .GET()
-                    .build();
-        } catch (URISyntaxException e) {
-            System.err.println("Error: Invalid Wikipedia URL syntax: " + pageUrl + " - " + e.getMessage());
-            return 0;
-        }
-
-        try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            if (response.statusCode() == 200) {
-                return response.body().length();
-            } else {
-                // System.err.println("Debug: Error fetching Wikipedia page " + pageUrl + ": " + response.statusCode());
-                return 0;
-            }
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Exception fetching Wikipedia page " + pageUrl + ": " + e.getMessage());
-            // e.printStackTrace(); // Keep for deeper debugging if necessary
-            return 0;
-        }
+        logger.info("Gods with most literature ({} characters): {}", finalMaxLength, result);
+        return result;
     }
 }

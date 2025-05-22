@@ -70,14 +70,10 @@ Update the acceptance tests pointing to the real endpoints.
 Verify the changes with the command: ./mvnw clean verify
 ```
 
-4. Begin the refactoring
-
-- Improve the design
-- Simplify the solution desing for the main class, use a interface
-- Improve pom.xml
-- Improve the tests
-- Migrate to assertj
-- Extract samples from oas d
+4. [ ] Refactoring
+4.1 [x] Improve the design
+4.3 [x] Improve pom.xml
+4.4 [ ] Improve the tests
 
 ## How to test in local?
 
