@@ -15,4 +15,4 @@ jobs:
           distribution: 'graalvm' # See 'Supported distributions' for available options
           java-version: '24'
       - name: Maven build problem 1
-        run: ./mvnw --batch-mode --no-transfer-progress verify --file ./backup/problem1/pom.xml
+        run: ./backup/problem1/mvnw --batch-mode --no-transfer-progress verify --file ./backup/problem1/pom.xml
