@@ -5,7 +5,6 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.StructuredTaskScope;
 import java.util.function.Predicate;
@@ -51,7 +50,7 @@ public class LatencyProblemSolver implements LatencyService {
         try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
             List<StructuredTaskScope.Subtask<List<String>>> subtasks = apiUrls.stream()
                     .map(apiUrl -> scope.fork(() -> godApiClient.fetchGods(apiUrl)))
-                    .collect(Collectors.toList());
+                    .toList();
 
             scope.join().throwIfFailed(); // Wait for all tasks and throw if any failed
 
@@ -73,18 +72,12 @@ public class LatencyProblemSolver implements LatencyService {
     }
 
     private List<BigInteger> convertGodNamesToDecimal(List<String> godNames) {
-        if (Objects.isNull(godNames)) {
-            return List.of();
-        }
         return godNames.stream()
                 .map(nameConverter::convertToDecimal)
                 .toList();
     }
 
     private BigInteger sumDecimalValues(List<BigInteger> decimalValues) {
-        if (Objects.isNull(decimalValues)) {
-            return BigInteger.ZERO;
-        }
         return decimalValues.stream()
                 .reduce(BigInteger.ZERO, BigInteger::add);
     }
