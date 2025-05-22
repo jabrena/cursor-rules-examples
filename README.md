@@ -28,7 +28,7 @@ jbang setup@jabrena init --maven
 Review if the solution require some initial intefaces to be used for the tests.
 
 ```bash
-implement an acceptance tests in the package info.jab.latency for the scenario:
+Implement an acceptance tests in the package info.jab.latency for the scenario:
 "Identify the Greek god with the most literature on Wikipedia".
 Use the open api to extract the examples to the tests using Wiremock
 and run the tests against an empty implementation of the interface.
@@ -37,6 +37,7 @@ and run the tests against an empty implementation of the interface.
 ```xml
 <properties>
     <wiremock.version>3.13.0</wiremock.version>
+    <jackson.version>2.17.0</jackson.version>
 </properties>
 
 <dependency>
@@ -44,6 +45,11 @@ and run the tests against an empty implementation of the interface.
     <artifactId>wiremock-standalone</artifactId>
     <version>${wiremock.version}</version>
     <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>${jackson.version}</version>
 </dependency>
 ```
 
@@ -54,6 +60,8 @@ Implement the solution.
 ```bash
 Implement a solution in the package info.jab.latency from src.
 Create a solution and later add test classes.
+Dont´t change the acceptance tests.
+Don´t change the Interface defined in package info.jab.latency
 Verify the changes with the command: ./mvnw clean verify
 ```
 

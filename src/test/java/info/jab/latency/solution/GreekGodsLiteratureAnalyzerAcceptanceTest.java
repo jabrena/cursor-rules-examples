@@ -3,7 +3,7 @@ package info.jab.latency.solution;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ public class GreekGodsLiteratureAnalyzerAcceptanceTest {
     private WireMockServer wireMockServer;
     private GreekGodsLiteratureAnalyzer analyzer;
 
-    private static final String GREEK_GODS_API_PATH = "/jabrena/latency-problems/greek";
+    private static final String GREEK_GODS_API_PATH = "/greek";
     private static final String WIKIPEDIA_API_PATH_PREFIX = "/wiki/";
 
     @BeforeEach
@@ -108,7 +108,7 @@ public class GreekGodsLiteratureAnalyzerAcceptanceTest {
         // Once the implementation is complete, this should be changed to assertEquals.
         System.out.println("Actual result: " + actualResult);
         System.out.println("Expected result: " + expected);
-        assertNotEquals(expected, actualResult, "The empty implementation should not produce the expected result yet.");
+        assertEquals(expected, actualResult);
 
         // Placeholder for the real assertion once implemented
         // assertEquals(expected.size(), actualResult.size());
