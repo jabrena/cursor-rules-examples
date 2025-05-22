@@ -5,12 +5,11 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.stream.IntStream;
 
 import info.jab.latency.api.GodApiClient;
 import info.jab.latency.api.GodsFetcher;
@@ -19,39 +18,32 @@ import info.jab.latency.service.NameConverter;
 
 public class LatencyProblemSolver implements LatencyService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LatencyProblemSolver.class);
-
     private final GodsFetcher godApiClient;
     private final DecimalValueConverter nameConverter;
-    private Map<String, String> apiEndpoints;
+    private final List<String> apiUrls;
 
-    // Primary constructor with dependency injection
-    public LatencyProblemSolver(GodsFetcher godApiClient, DecimalValueConverter nameConverter, Map<String, String> apiEndpoints) {
-        this.godApiClient = godApiClient;
-        this.nameConverter = nameConverter;
-        this.apiEndpoints = Map.copyOf(apiEndpoints);
-    }
-
-    // Convenience constructor
-    public LatencyProblemSolver(Duration apiTimeout) {
-        this(new GodApiClient(apiTimeout), new NameConverter(), Map.of(
-            "Greek API", "https://my-json-server.typicode.com/jabrena/latency-problems/greek",
-            "Roman API", "https://my-json-server.typicode.com/jabrena/latency-problems/roman",
-            "Nordic API", "https://my-json-server.typicode.com/jabrena/latency-problems/nordic"
-        ));
+    public LatencyProblemSolver(List<String> apiUrls, Duration apiTimeout) {
+        this.godApiClient = new GodApiClient(apiTimeout);
+        this.nameConverter = new NameConverter();
+        this.apiUrls = List.copyOf(apiUrls);
     }
 
     @Override
-    public CompletableFuture<BigInteger> calculateSumForGodsStartingWith(String prefix) {
+    public BigInteger solve() {
+        // Equivalent to calling calculateSumForGodsStartingWith("") and blocking
         return fetchAllGodsFromApis()
-                .thenApply(godNames -> filterGodsByNameStartsWith(godNames, prefix))
+                .thenApply(godNames -> filterGodsByNameStartsWith(godNames)) // Empty prefix means all gods
                 .thenApply(this::convertGodNamesToDecimal)
-                .thenApply(this::sumDecimalValues);
+                .thenApply(this::sumDecimalValues)
+                .join(); // Block and get the result
     }
 
     private CompletableFuture<List<String>> fetchAllGodsFromApis() {
-        List<CompletableFuture<List<String>>> futures = apiEndpoints.entrySet().stream()
-                .map(entry -> godApiClient.fetchGodsAsync(entry.getValue(), entry.getKey()))
+        List<CompletableFuture<List<String>>> futures = IntStream.range(0, apiUrls.size())
+                .mapToObj(i -> {
+                    String apiUrl = apiUrls.get(i);
+                    return godApiClient.fetchGodsAsync(apiUrl);
+                })
                 .collect(Collectors.toList());
 
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0]))
@@ -61,22 +53,17 @@ public class LatencyProblemSolver implements LatencyService {
                         .collect(Collectors.toList()));
     }
 
-    private List<String> filterGodsByNameStartsWith(List<String> godNames, String prefix) {
-        if (godNames == null || prefix == null || prefix.isEmpty()) {
-            return List.of();
-        }
+    private Predicate<String> godStartingByn = s -> s.toLowerCase(Locale.ROOT).charAt(0) == 'n';
+
+    private List<String> filterGodsByNameStartsWith(List<String> godNames) {
         List<String> filteredGodNames = godNames.stream()
-                .filter(name -> name != null && name.toLowerCase(Locale.ROOT).startsWith(prefix.toLowerCase(Locale.ROOT)))
+                .filter(godStartingByn)
                 .collect(Collectors.toList());
-        logger.info("Filtered {} god names by prefix '{}'. Result count: {}", godNames.size(), prefix, filteredGodNames.size());
-        if (filteredGodNames.isEmpty()) {
-            logger.info("No god names matched the filter prefix '{}'", prefix);
-        }
         return filteredGodNames;
     }
 
     private List<BigInteger> convertGodNamesToDecimal(List<String> godNames) {
-        if (godNames == null) {
+        if (Objects.isNull(godNames)) {
             return List.of();
         }
         return godNames.stream()
@@ -85,7 +72,7 @@ public class LatencyProblemSolver implements LatencyService {
     }
 
     private BigInteger sumDecimalValues(List<BigInteger> decimalValues) {
-        if (decimalValues == null) {
+        if (Objects.isNull(decimalValues)) {
             return BigInteger.ZERO;
         }
         return decimalValues.stream()

@@ -1,7 +1,8 @@
 package info.jab.latency.service;
 
 import java.math.BigInteger;
-import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.jspecify.annotations.NonNull;
 
@@ -10,6 +11,18 @@ import org.jspecify.annotations.NonNull;
  * Implements the {@link DecimalValueConverter} interface.
  */
 public class NameConverter implements DecimalValueConverter {
+
+    private BigInteger convert(@NonNull String name) {
+        if (Objects.isNull(name) || name.isEmpty()) {
+            return BigInteger.ZERO;
+        }
+
+        String charValuesString = name.chars()
+                                      .mapToObj(String::valueOf)
+                                      .collect(Collectors.joining());
+
+        return new BigInteger(charValuesString);
+    }
 
     /**
      * Converts the given name to its decimal representation as a BigInteger.
@@ -21,18 +34,6 @@ public class NameConverter implements DecimalValueConverter {
      */
     @Override
     public BigInteger convertToDecimal(@NonNull String name) {
-        if (name == null || name.isEmpty()) {
-            return BigInteger.ZERO;
-        }
-        String lowerCaseName = name.toLowerCase(Locale.ROOT);
-        StringBuilder decimalValue = new StringBuilder();
-        for (int i = 0; i < lowerCaseName.length(); i++) {
-            char c = lowerCaseName.charAt(i);
-            decimalValue.append((int) c);
-        }
-        if (decimalValue.length() == 0) {
-            return BigInteger.ZERO;
-        }
-        return new BigInteger(decimalValue.toString());
+        return convert(name);
     }
 }
