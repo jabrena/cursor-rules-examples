@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -134,6 +135,7 @@ public class GreekGodsLiteratureAnalyzerAcceptanceTest {
         assertEquals(expected, actualResult);
     }
 
+    @Disabled
     @Test
     void shouldIdentifyGreekGodsWithMostLiterature_RealAPIs() {
         // Given

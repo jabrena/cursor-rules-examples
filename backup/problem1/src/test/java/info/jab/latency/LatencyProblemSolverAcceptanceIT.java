@@ -11,6 +11,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -81,6 +82,7 @@ class LatencyProblemSolverAcceptanceIT {
         assertThat(totalSum).isEqualTo(EXPECTED_ALL_GODS_SUM);
     }
 
+    @Disabled
     @Test
     @DisplayName("E2E (Real APIs): Use LatencyProblemSolver with real APIs and assert the sum")
     void solve_withRealApis_shouldReturnExpectedSum() {

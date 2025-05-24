@@ -1,11 +1,9 @@
 ---
-description: Java Acceptance criteria guidelines
-globs: **/*.feature
+description: Create Acceptance criteria guidelines
+globs: 
 alwaysApply: false
 ---
-# Java Acceptance criteria guidelines
-
-# Gherkin for Java Acceptance Criteria
+# Create Acceptance criteria guidelines
 
 This document provides guidelines for writing Gherkin feature files to define acceptance criteria for Java applications. It focuses on capturing both functional and non-functional requirements in a clear, concise, and testable manner.
 
