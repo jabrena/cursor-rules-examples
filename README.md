@@ -29,11 +29,37 @@ Review if the solution require some initial intefaces to be used for the tests.
 
 ![](./docs/double-loop-tdd.png)
 
+- 3.1 [x] Add acceptance tests
+
 ```bash
 Implement an acceptance tests in the package info.jab.latency for the scenario:
-"Identify the Greek god with the most literature on Wikipedia".
-Use the open api to extract the examples to the tests using Wiremock
-and run the tests against an empty implementation of the interface.
+"Successfully retrieve Greek gods list".
+Don´t develop any source code, only implement the acceptance test.
+It will fail
+```
+
+- **Notes:**Review that the implementation use RestAssured.
+- **Notes2:**Review that the implementation not use Cucumber.
+
+- 1.2 [x] Improve pom.xml
+
+- **Notes:** Review that plugins are not located in pluginManagement
+
+4. [x] Implement the solution
+
+Implement the solution.
+
+```bash
+Implement a solution in the package info.jab.latency from src.
+Create a solution and later add test classes.
+Dont´t change the acceptance tests.
+Don´t change the Interface defined in package info.jab.latency
+Verify the changes with the command: ./mvnw clean verify
+```
+
+```bash
+Update the acceptance tests pointing to the real endpoints.
+Verify the changes with the command: ./mvnw clean verify
 ```
 
 ```xml
@@ -55,30 +81,11 @@ and run the tests against an empty implementation of the interface.
 </dependency>
 ```
 
-4. [x] Implement the solution
-
-Implement the solution.
-
-```bash
-Implement a solution in the package info.jab.latency from src.
-Create a solution and later add test classes.
-Dont´t change the acceptance tests.
-Don´t change the Interface defined in package info.jab.latency
-Verify the changes with the command: ./mvnw clean verify
-```
-
-```bash
-Update the acceptance tests pointing to the real endpoints.
-Verify the changes with the command: ./mvnw clean verify
-```
-
 4. [x] Refactoring
 
 Improve the running solution
 
 - 4.1 [x] Improve the design
-
-- 4.3 [x] Improve pom.xml
 
 - 4.4 [x] Improve the tests
 
