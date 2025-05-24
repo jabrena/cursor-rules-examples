@@ -94,9 +94,12 @@ Improve the tests@test verify the changes with ./mvnw clean test
 
 ## References
 
-- https://github.com/jabrena/cursor-rules-java
-- https://github.com/jabrena/latency-problems
-- https://github.com/jabrena/latency-rosetta-stone (Hints)
 - https://editor-next.swagger.io/
 - https://www.plantuml.com/plantuml/uml/
 - https://cekrem.github.io/posts/double-loop-tdd-blog-engine-pt2/
+- ...
+- https://github.com/jabrena/cursor-rules-agile
+- https://github.com/jabrena/cursor-rules-java
+- https://github.com/jabrena/cursor-rules-tasks
+- https://github.com/jabrena/cursor-rules-examples
+- https://github.com/jabrena/101-cursor

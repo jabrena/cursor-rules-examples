@@ -1,9 +1,8 @@
 # Problem 3
 
-God fans are using a new API to provide information about `GREEK`, `ROMAN`, `NORDIC`, `INDIAN` or `CELTIBERIAN` gods.
-It is important that the interface support Concurrent access to the API. Provide a Test that ensure that in a Concurrent scenario, the information retrieved is `Thread Safe`.
-
-![](./secuence-diagram-latency-problem3.png)
+God fans require a specific REST API Development which provide in a single place to retrieve information about  `GREEK`, `ROMAN`, `NORDIC`, `INDIAN` or `CELTIBERIAN` gods. 
+The endpoint will accept request in the following endpoint: `GET /api/v1/gods/{god}`
+The development will behave like a Gateway to the source of truth located in: https://my-json-server.typicode.com/jabrena/latency-problems/
 
 **Notes:**
 
