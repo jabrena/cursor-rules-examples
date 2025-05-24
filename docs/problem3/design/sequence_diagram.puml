@@ -3,7 +3,7 @@
 title God Information Gateway Service\nSequence Diagram
 
 ' Epic: EPIC-001 - God Information Gateway API
-' Feature: FEAT-001 - God Information Gateway API  
+' Feature: FEAT-001 - God Information Gateway API
 ' User Story: US-001 - Basic God Information Service
 
 actor "API Consumer" as Client
@@ -26,10 +26,10 @@ note over Gateway : God Information Gateway API\nis running on localhost:8080
 == Main Success Scenario: Retrieve Greek Gods ==
 note over Client, Greek : **Scenario:** Successfully retrieve Greek gods list\n**Given:** All external mythology APIs are available
 
-Client -> Gateway : GET /api/v1/gods/GREEK
+Client -> Gateway : GET /api/v1/gods/greek
 activate Gateway
 
-note over Gateway : Validate mythology parameter\n(GREEK, ROMAN, NORDIC, INDIAN, CELTIBERIAN)
+note over Gateway : Validate mythology parameter\n(accepts: greek, roman, nordic, indian, celtiberian\nand uppercase for backward compatibility)
 
 Gateway -> Greek : GET /greek
 activate Greek
@@ -39,47 +39,64 @@ deactivate Greek
 
 note over Gateway : Process and format response\nwith metadata (count, source, timestamp)
 
-Gateway --> Client : HTTP 200 OK\n{\n  "mythology": "GREEK",\n  "gods": ["Zeus", "Hera", "Poseidon", ...],\n  "count": 20,\n  "source": "external_api",\n  "timestamp": "2024-01-15T10:30:00Z"\n}
+Gateway --> Client : HTTP 200 OK\n{\n  "mythology": "greek",\n  "gods": ["Zeus", "Hera", "Poseidon", ...],\n  "count": 20,\n  "source": "external_api",\n  "timestamp": "2024-01-15T10:30:00Z"\n}
 deactivate Gateway
 
-note over Client : **Acceptance Criteria Met:**\n✓ HTTP 200 status received\n✓ Response contains Greek gods including\n  "Zeus", "Hera", "Poseidon"
+note over Client : **Acceptance Criteria Met:**\n✓ HTTP 200 status received\n✓ Response contains Greek gods including\n  "Zeus", "Hera", "Poseidon"\n✓ Response mythology field is lowercase
+
+== Backward Compatibility: Uppercase Parameters ==
+
+Client -> Gateway : GET /api/v1/gods/GREEK
+activate Gateway
+
+note over Gateway : Accepts uppercase for backward compatibility\nConverts internally to lowercase
+
+Gateway -> Greek : GET /greek
+activate Greek
+Greek --> Gateway : Response: ["Zeus", "Hera", "Poseidon", ...]
+deactivate Greek
+
+Gateway --> Client : HTTP 200 OK\n{\n  "mythology": "greek",\n  "gods": ["Zeus", "Hera", "Poseidon", ...],\n  "count": 20,\n  "source": "external_api",\n  "timestamp": "2024-01-15T10:30:00Z"\n}
+deactivate Gateway
+
+note over Client : **Note:** Response always returns\nlowercase mythology name
 
 == Alternative Flows: Other Mythologies ==
 
-Client -> Gateway : GET /api/v1/gods/ROMAN
+Client -> Gateway : GET /api/v1/gods/roman
 activate Gateway
 Gateway -> Roman : GET /roman
 activate Roman
 Roman --> Gateway : ["Venus", "Mars", "Neptun", ...]
 deactivate Roman
-Gateway --> Client : HTTP 200 OK with Roman gods
+Gateway --> Client : HTTP 200 OK with Roman gods\n(mythology: "roman")
 deactivate Gateway
 
-Client -> Gateway : GET /api/v1/gods/NORDIC
+Client -> Gateway : GET /api/v1/gods/nordic
 activate Gateway
 Gateway -> Nordic : GET /nordic
 activate Nordic
 Nordic --> Gateway : ["Baldur", "Freyja", "Heimdall", ...]
 deactivate Nordic
-Gateway --> Client : HTTP 200 OK with Nordic gods
+Gateway --> Client : HTTP 200 OK with Nordic gods\n(mythology: "nordic")
 deactivate Gateway
 
-Client -> Gateway : GET /api/v1/gods/INDIAN
+Client -> Gateway : GET /api/v1/gods/indian
 activate Gateway
 Gateway -> Indian : GET /indian
 activate Indian
 Indian --> Gateway : ["Brahma", "Vishnu", "Shiva", ...]
 deactivate Indian
-Gateway --> Client : HTTP 200 OK with Indian gods
+Gateway --> Client : HTTP 200 OK with Indian gods\n(mythology: "indian")
 deactivate Gateway
 
-Client -> Gateway : GET /api/v1/gods/CELTIBERIAN
+Client -> Gateway : GET /api/v1/gods/celtiberian
 activate Gateway
 Gateway -> Celtiberian : GET /celtiberian
 activate Celtiberian
 Celtiberian --> Gateway : ["Ataecina", "Candamius", ...]
 deactivate Celtiberian
-Gateway --> Client : HTTP 200 OK with Celtiberian gods
+Gateway --> Client : HTTP 200 OK with Celtiberian gods\n(mythology: "celtiberian")
 deactivate Gateway
 
 == Error Scenarios ==
@@ -88,11 +105,11 @@ deactivate Gateway
 Client -> Gateway : GET /api/v1/gods/INVALID
 activate Gateway
 note over Gateway : Invalid mythology parameter
-Gateway --> Client : HTTP 400 Bad Request\n{"error": "INVALID_MYTHOLOGY"}
+Gateway --> Client : HTTP 400 Bad Request\n{"error": "INVALID_MYTHOLOGY",\n "message": "Valid values are: greek, roman, nordic, indian, celtiberian"}
 deactivate Gateway
 
 ' Timeout scenario
-Client -> Gateway : GET /api/v1/gods/GREEK
+Client -> Gateway : GET /api/v1/gods/greek
 activate Gateway
 Gateway -> Greek : GET /greek
 activate Greek
@@ -103,7 +120,7 @@ Gateway --> Client : HTTP 504 Gateway Timeout\n{"error": "GATEWAY_TIMEOUT"}
 deactivate Gateway
 
 ' Service unavailable scenario
-Client -> Gateway : GET /api/v1/gods/GREEK
+Client -> Gateway : GET /api/v1/gods/greek
 activate Gateway
 Gateway -> Greek : GET /greek
 activate Greek
@@ -122,4 +139,4 @@ note over Client, Celtiberian
   • Thread-safe concurrent access support
 end note
 
-@enduml 
+@enduml

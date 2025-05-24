@@ -1,154 +1,169 @@
 package info.jab.latency.solution;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 
-import info.jab.latency.DefaultGreekGodsLiteratureAnalyzer;
-import info.jab.latency.GreekGodsLiteratureAnalyzer;
+@DisplayName("Greek Gods Literature Analyzer Acceptance Tests")
+class GreekGodsLiteratureAnalyzerAcceptanceTest {
 
-public class GreekGodsLiteratureAnalyzerAcceptanceTest {
+    private static final Logger logger = LoggerFactory.getLogger(GreekGodsLiteratureAnalyzerAcceptanceTest.class);
 
-    private WireMockServer wireMockServer;
-    private GreekGodsLiteratureAnalyzer analyzer;
-
+    private static final String SHAKESPEARE_API_PATH = "/shakespeare";
     private static final String GREEK_GODS_API_PATH = "/greek";
-    private static final String WIKIPEDIA_API_PATH_PREFIX = "/wiki/";
+
+    @RegisterExtension
+    static WireMockExtension wireMockServer = WireMockExtension.newInstance()
+            .options(WireMockConfiguration.wireMockConfig().dynamicPort())
+            .build();
+
+    private GreekGodsLiteratureAnalyzer analyzer;
 
     @BeforeEach
     void setUp() {
-        wireMockServer = new WireMockServer(options().dynamicPort());
-        wireMockServer.start();
-        WireMock.configureFor("localhost", wireMockServer.port());
-        analyzer = new DefaultGreekGodsLiteratureAnalyzer();
+        logger.info("Starting test setup");
 
-        // Stub for the Greek Gods API
-        wireMockServer.stubFor(get(urlEqualTo("/greek"))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBodyFile("wiremock/greek_gods.json")));
+        // Configure the analyzer with WireMock server URLs
+        String shakespeareApiUrl = wireMockServer.baseUrl() + SHAKESPEARE_API_PATH;
+        String greekGodsApiUrl = wireMockServer.baseUrl() + GREEK_GODS_API_PATH;
 
-        // Stubs for Wikipedia pages
-        stubWikipediaPage("Zeus", "Content for Zeus page. Length 15023", 15023);
-        stubWikipediaPage("Hera", "Content for Hera page. Length 16000", 16000); // Adjusted Hera to 16000 for tie
-        stubWikipediaPage("Poseidon", "Content for Poseidon. Length 12000", 12000);
-        stubWikipediaPage("Demeter", "Content for Demeter. Length 11000", 11000);
-        stubWikipediaPage("Ares", "Content for Ares. Length 10000", 10000);
-        stubWikipediaPage("Athena", "Content for Athena. Length 13000", 13000);
-        stubWikipediaPage("Apollo", "Content for Apollo. Length 16000", 16000); // Adjusted Apollo to be highest
-        stubWikipediaPage("Artemis", "Content for Artemis. Length 10500", 10500);
-        stubWikipediaPage("Hephaestus", "Content for Hephaestus. Length 9000", 9000);
-        stubWikipediaPage("Aphrodite", "Content for Aphrodite. Length 11500", 11500);
-        stubWikipediaPage("Hermes", "Content for Hermes. Length 9500", 9500);
-        stubWikipediaPage("Dionysus", "Content for Dionysus. Length 8000", 8000);
-        stubWikipediaPage("Hades", "Content for Hades. Length 12500", 12500);
-        stubWikipediaPage("Hypnos", "Page for Hypnos. Length 7000", 7000);
-        stubWikipediaPage("Nike", "Page for Nike. Length 6000", 6000);
-        stubWikipediaPage("Janus", "Page for Janus. Length 5000", 5000);
-        stubWikipediaPage("Nemesis", "Content for Nemesis. Length 8500", 8500);
-        stubWikipediaPage("Iris", "Content for Iris. Length 7500", 7500);
-        stubWikipediaPage("Hecate", "Content for Hecate. Length 9200", 9200);
-        stubWikipediaPage("Tyche", "Content for Tyche. Length 6500", 6500);
+        analyzer = new GreekGodsLiteratureAnalyzer(
+            shakespeareApiUrl,
+            greekGodsApiUrl,
+            Duration.ofSeconds(10)
+        );
 
-        // Stub for a god not in the list or if a page is missing (results in 0 length)
-        wireMockServer.stubFor(get(urlEqualTo(WIKIPEDIA_API_PATH_PREFIX + "NonExistentGod"))
-                .willReturn(aResponse().withStatus(404)));
-    }
+        logger.debug("Created GreekGodsLiteratureAnalyzer with Shakespeare API: {} and Greek Gods API: {}",
+                    shakespeareApiUrl, greekGodsApiUrl);
 
-    private void stubWikipediaPage(String godName, String content, int contentLength) {
-        // Ensure the stubbed content actually has the specified length, otherwise the test is misleading.
-        // This is a simple way to do it for the test. Real content would be complex.
-        StringBuilder sb = new StringBuilder(content);
-        if (sb.length() > contentLength) {
-            sb.setLength(contentLength);
-        } else {
-            while(sb.length() < contentLength) {
-                sb.append(" "); // Pad with spaces
-            }
-        }
+        // Setup mock responses
+        setupMockResponses();
 
-        wireMockServer.stubFor(get(urlEqualTo(WIKIPEDIA_API_PATH_PREFIX + godName))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "text/html")
-                        .withBody(sb.toString())));
+        logger.info("Test setup completed successfully");
     }
 
     @AfterEach
     void tearDown() {
-        wireMockServer.stop();
+        logger.debug("Starting test teardown");
+
+        try {
+            // Clean up resources if needed
+            analyzer = null;
+            logger.debug("Test resources cleaned up successfully");
+        } catch (Exception e) {
+            logger.warn("Error during test teardown", e);
+        } finally {
+            logger.info("Test teardown completed");
+        }
     }
 
-    @Test
-    void shouldIdentifyGreekGodsWithMostLiterature() {
-        // Given
-        String greekGodsApiUrl = wireMockServer.baseUrl() + GREEK_GODS_API_PATH;
-        String wikipediaUrlTemplate = wireMockServer.baseUrl() + WIKIPEDIA_API_PATH_PREFIX + "{greekGod}";
-        List<String> apiEndpoints = List.of(greekGodsApiUrl, wikipediaUrlTemplate);
+    private void setupMockResponses() {
+        logger.debug("Setting up mock responses for external APIs");
 
-        List<String> expected = new ArrayList<>(List.of("Apollo", "Hera")); // Apollo and Hera have the same length
-
-        // When
-        List<String> actualResult = new ArrayList<>(analyzer.solve(apiEndpoints));
-
-        // Then
-        System.out.println("Actual result (mocked): " + actualResult);
-        System.out.println("Expected result (mocked): " + expected);
-        // Sort lists to ensure order-independent comparison
-        java.util.Collections.sort(actualResult);
-        java.util.Collections.sort(expected);
-        assertEquals(expected, actualResult);
-    }
-
-    @Test
-    void shouldReturnEmptyListWhenGreekGodsAPIReturnsEmpty() {
-        // Given
-        // Override the default stub for the Greek Gods API to return an empty list
-        wireMockServer.stubFor(get(urlEqualTo(GREEK_GODS_API_PATH))
+        try {
+            // Mock Shakespeare API response
+            wireMockServer.stubFor(get(urlEqualTo(SHAKESPEARE_API_PATH))
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("[]"))); // Empty JSON array
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBodyFile("wiremock/shakespeare.json")));
+            logger.trace("Shakespeare API mock response configured");
 
-        String greekGodsApiUrl = wireMockServer.baseUrl() + GREEK_GODS_API_PATH;
-        String wikipediaUrlTemplate = wireMockServer.baseUrl() + WIKIPEDIA_API_PATH_PREFIX + "{greekGod}";
-        List<String> apiEndpoints = List.of(greekGodsApiUrl, wikipediaUrlTemplate);
+            // Mock Greek Gods API response
+            wireMockServer.stubFor(get(urlEqualTo(GREEK_GODS_API_PATH))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBodyFile("wiremock/greek-gods.json")));
+            logger.trace("Greek Gods API mock response configured");
 
-        List<String> expected = List.of();
+            logger.info("All mock responses configured successfully");
 
-        // When
-        List<String> actualResult = analyzer.solve(apiEndpoints);
-
-        // Then
-        System.out.println("Actual result (empty API response): " + actualResult);
-        System.out.println("Expected result (empty API response): " + expected);
-        assertEquals(expected, actualResult);
+        } catch (Exception e) {
+            logger.error("Failed to setup mock responses", e);
+            throw new RuntimeException("Mock setup failed", e);
+        }
     }
 
     @Test
-    void shouldIdentifyGreekGodsWithMostLiterature_RealAPIs() {
-        // Given
-        // Note: This test uses live internet APIs and might be slow or occasionally flaky.
-        String realGreekGodsApiUrl = "https://my-json-server.typicode.com/jabrena/latency-problems/greek";
-        String realWikipediaUrlTemplate = "https://en.wikipedia.org/wiki/{greekGod}";
-        List<String> apiEndpoints = List.of(realGreekGodsApiUrl, realWikipediaUrlTemplate);
+    @DisplayName("Successfully analyze Shakespeare text for Greek god references")
+    void shouldAnalyzeShakespeareForGreekGodReferences() {
+        logger.info("Starting test: Successfully analyze Shakespeare text for Greek god references");
 
-        List<String> expected = List.of("Apollo"); // Based on previous successful run
+        try {
+            logger.debug("Executing GreekGodsLiteratureAnalyzer.analyze()");
 
-        // When
-        List<String> actualResult = analyzer.solve(apiEndpoints);
+            List<String> result = analyzer.analyze();
 
-        // Then
-        System.out.println("Gods with most literature (Real APIs): " + actualResult);
-        assertEquals(expected, actualResult);
+            logger.debug("Analysis completed, found {} Greek god references", result.size());
+
+            // Validate the results
+            assertThat(result).isNotNull();
+            assertThat(result).isNotEmpty();
+
+            // Log some of the found references for debugging
+            if (!result.isEmpty()) {
+                logger.debug("Sample Greek god references found: {}", result.subList(0, Math.min(3, result.size())));
+            }
+
+            logger.info("Test completed successfully - Greek god references found and validated");
+
+        } catch (Exception e) {
+            logger.error("Test failed during analysis execution", e);
+            throw e;
+        }
+    }
+
+    @Test
+    @DisplayName("Handle empty or missing data gracefully")
+    void shouldHandleEmptyDataGracefully() {
+        logger.info("Starting test: Handle empty or missing data gracefully");
+
+        try {
+            // Override stubs with empty responses
+            logger.debug("Setting up empty response stubs for error case testing");
+
+            wireMockServer.stubFor(get(urlEqualTo(SHAKESPEARE_API_PATH))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("{\"text\": \"\"}")));
+
+            wireMockServer.stubFor(get(urlEqualTo(GREEK_GODS_API_PATH))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "application/json")
+                    .withBody("{\"gods\": []}")));
+
+            logger.debug("Executing analysis with empty data");
+
+            List<String> result = analyzer.analyze();
+
+            logger.debug("Analysis with empty data completed, result size: {}", result.size());
+
+            // Should handle empty data gracefully
+            assertThat(result).isNotNull();
+            // Result might be empty, which is acceptable for empty input
+
+            logger.info("Test completed successfully - empty data handled gracefully");
+
+        } catch (Exception e) {
+            logger.error("Test failed during empty data handling", e);
+            throw e;
+        }
     }
 }

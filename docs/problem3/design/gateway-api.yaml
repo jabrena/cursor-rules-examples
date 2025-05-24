@@ -8,7 +8,11 @@ info:
 
     The gateway routes requests to appropriate third-party services and ensures
     thread-safe concurrent access to mythology data.
-  version: 1.0.0
+
+    Updated to accept lowercase parameters (e.g., "greek" instead of "GREEK")
+    for improved user experience and API consistency. Backward compatibility
+    is maintained for uppercase parameters.
+  version: 1.1.0
   contact:
     name: Juan Antonio Breña Moral
     email: my@email.com
@@ -29,26 +33,34 @@ paths:
         This endpoint supports concurrent access and ensures thread-safe operations.
 
         The gateway routes requests to the appropriate third-party service based on the mythology parameter:
-        - GREEK: Routes to /greek endpoint
-        - ROMAN: Routes to /roman endpoint
-        - NORDIC: Routes to /nordic endpoint
-        - INDIAN: Routes to /indian endpoint
-        - CELTIBERIAN: Routes to /celtiberian endpoint
+        - greek (or GREEK for backward compatibility): Routes to /greek endpoint
+        - roman (or ROMAN for backward compatibility): Routes to /roman endpoint
+        - nordic (or NORDIC for backward compatibility): Routes to /nordic endpoint
+        - indian (or INDIAN for backward compatibility): Routes to /indian endpoint
+        - celtiberian (or CELTIBERIAN for backward compatibility): Routes to /celtiberian endpoint
+
+        Note: The API accepts both lowercase and uppercase parameters for backward compatibility,
+        but responses always return lowercase mythology names.
       operationId: getGodsByMythology
       parameters:
         - name: mythology
           in: path
           required: true
-          description: The mythology type to retrieve gods for
+          description: The mythology type to retrieve gods for (case-insensitive)
           schema:
             type: string
             enum:
+              - greek
+              - roman
+              - nordic
+              - indian
+              - celtiberian
               - GREEK
               - ROMAN
               - NORDIC
               - INDIAN
               - CELTIBERIAN
-          example: GREEK
+          example: greek
       responses:
         '200':
           description: Successful operation - returns list of gods for the specified mythology
@@ -60,7 +72,7 @@ paths:
                 greek_gods:
                   summary: Greek gods example
                   value:
-                    mythology: "GREEK"
+                    mythology: "greek"
                     gods:
                       - "Zeus"
                       - "Hera"
@@ -88,7 +100,7 @@ paths:
                 roman_gods:
                   summary: Roman gods example
                   value:
-                    mythology: "ROMAN"
+                    mythology: "roman"
                     gods:
                       - "Venus"
                       - "Mars"
@@ -102,7 +114,7 @@ paths:
                 nordic_gods:
                   summary: Nordic gods example
                   value:
-                    mythology: "NORDIC"
+                    mythology: "nordic"
                     gods:
                       - "Baldur"
                       - "Freyja"
@@ -120,7 +132,7 @@ paths:
                 indian_gods:
                   summary: Indian gods example
                   value:
-                    mythology: "INDIAN"
+                    mythology: "indian"
                     gods:
                       - "Brahma"
                       - "Vishnu"
@@ -141,7 +153,7 @@ paths:
                 celtiberian_gods:
                   summary: Celtiberian gods example
                   value:
-                    mythology: "CELTIBERIAN"
+                    mythology: "celtiberian"
                     gods:
                       - "Ataecina"
                       - "Candamius"
@@ -162,7 +174,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
               example:
                 error: "INVALID_MYTHOLOGY"
-                message: "The mythology parameter must be one of: GREEK, ROMAN, NORDIC, INDIAN, CELTIBERIAN"
+                message: "The mythology parameter must be one of: greek, roman, nordic, indian, celtiberian"
                 timestamp: "2024-01-15T10:30:00Z"
                 path: "/api/v1/gods/INVALID"
         '404':
@@ -186,7 +198,7 @@ paths:
                 error: "INTERNAL_SERVER_ERROR"
                 message: "An error occurred while processing the request"
                 timestamp: "2024-01-15T10:30:00Z"
-                path: "/api/v1/gods/GREEK"
+                path: "/api/v1/gods/greek"
         '503':
           description: Service unavailable - third-party service is down
           content:
@@ -195,20 +207,9 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
               example:
                 error: "SERVICE_UNAVAILABLE"
-                message: "The third-party mythology service is currently unavailable"
+                message: "The external mythology service is currently unavailable"
                 timestamp: "2024-01-15T10:30:00Z"
-                path: "/api/v1/gods/GREEK"
-        '504':
-          description: Gateway timeout - third-party service timeout
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "GATEWAY_TIMEOUT"
-                message: "The request to the third-party service timed out"
-                timestamp: "2024-01-15T10:30:00Z"
-                path: "/api/v1/gods/GREEK"
+                path: "/api/v1/gods/greek"
 
 components:
   schemas:
@@ -224,13 +225,13 @@ components:
         mythology:
           type: string
           enum:
-            - GREEK
-            - ROMAN
-            - NORDIC
-            - INDIAN
-            - CELTIBERIAN
-          description: The mythology type requested
-          example: "GREEK"
+            - greek
+            - roman
+            - nordic
+            - indian
+            - celtiberian
+          description: The mythology type requested (always lowercase in response)
+          example: "greek"
         gods:
           type: array
           items:
@@ -268,7 +269,7 @@ components:
         message:
           type: string
           description: Human-readable error message
-          example: "The mythology parameter must be one of: GREEK, ROMAN, NORDIC, INDIAN, CELTIBERIAN"
+          example: "The mythology parameter must be one of: greek, roman, nordic, indian, celtiberian"
         timestamp:
           type: string
           format: date-time
@@ -289,10 +290,15 @@ components:
       name: mythology
       in: path
       required: true
-      description: The mythology type to retrieve gods for
+      description: The mythology type to retrieve gods for (case-insensitive)
       schema:
         type: string
         enum:
+          - greek
+          - roman
+          - nordic
+          - indian
+          - celtiberian
           - GREEK
           - ROMAN
           - NORDIC

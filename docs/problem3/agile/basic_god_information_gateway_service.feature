@@ -1,5 +1,5 @@
 # Epic: EPIC-001 - God Information Gateway API
-# Feature: FEAT-001 - God Information Gateway API  
+# Feature: FEAT-001 - God Information Gateway API
 # User Story: US-001 - Basic God Information Service
 
 Feature: God Information Gateway Service
@@ -10,12 +10,26 @@ Background:
 
 Scenario: Successfully retrieve Greek gods list
   Given all external mythology APIs are available
+  When I make a GET request to "/api/v1/gods/greek"
+  Then I should receive HTTP 200 status
+  And the response should be in JSON format
+  And the response should contain:
+    | field      | value                          |
+    | mythology  | "greek"                        |
+    | gods       | ["Zeus", "Hera", "Poseidon"]   |
+    | count      | 20                             |
+    | source     | "external_api"                 |
+    | timestamp  | current timestamp              |
+  And the response should include gods "Zeus", "Hera", "Poseidon"
+
+Scenario: Backward compatibility with uppercase parameters
+  Given all external mythology APIs are available
   When I make a GET request to "/api/v1/gods/GREEK"
   Then I should receive HTTP 200 status
   And the response should be in JSON format
   And the response should contain:
     | field      | value                          |
-    | mythology  | "GREEK"                        |
+    | mythology  | "greek"                        |
     | gods       | ["Zeus", "Hera", "Poseidon"]   |
     | count      | 20                             |
     | source     | "external_api"                 |
