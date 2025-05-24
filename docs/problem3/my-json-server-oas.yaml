@@ -160,7 +160,7 @@ paths:
         - External Celtiberian Gods
       summary: Get Celtiberian gods from external API
       description: Returns a list of Celtiberian gods from the external service
-      operationId: getExternalCeltiIberianGods
+      operationId: getExternalCeltibrianGods
       responses:
         '200':
           description: Successful operation

@@ -10,7 +10,7 @@ participant Indian
 participant Celtiberian
 
 loop Stream
-    ConsumerTest -> Gateway: GET /{god}
+    ConsumerTest -> Gateway: GET /api/v1/gods/{god}
 
     Gateway -> Greek: GET /greek
     Greek --> Gateway: List of gods
