@@ -6,9 +6,38 @@ Probe the help of the **Cursor rules for Java** with non trivial Java problems.
 
 ## Getting started
 
-1. [x] Review requirements.
+- 1. [x] Review requirements.
+  - 1.1 [x] Create an `Epic` about the development
 
-Have a conversation with the LLM to improve the initial requirements.
+```bash
+Create an agile epic based the initial documentation received and use @2001-agile-create-an-epic
+```
+
+  - 1.2 [x] Create a `Feature` about the development
+
+```bash
+Create a feature based on the epic and use @2002-agile-create-features-from-epics
+```
+
+  - 1.3 [x] Create an `User story` and the `Acceptance criteria` in `Gherkin` format based on the requirements.
+
+```bash
+Create a user story based on the feature and the acceptance criteria using @2003-agile-create-user-stories
+```
+
+  - 1.5 [x] Create an `UML` Sequence diagrama about the functional requirements
+
+```bash
+Create the UML sequence diagram based on 2004-uml-sequence-diagram-from-agile-artifacts in plantuml
+```
+
+  - 1.5 [ ] Create an `ADR` about the functional requirements
+
+```bash
+Create the ADR about functional req
+```
+
+  - 1.6 [ ] Create an `ADR` about the acceptance testing Strategy
 
 ```bash
 How to improve this gherkin? What questions do you consider useful
