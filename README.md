@@ -7,7 +7,10 @@ Probe the help of the **Cursor rules for Java** with non trivial Java problems.
 ## Getting started
 
 - 1. [x] Review requirements.
+
   - 1.1 [x] Create an `Epic` about the development
+
+**Note:** Attach the initial free format text/markdown document describing the problem to solve.
 
 ```bash
 Create an agile epic based the initial documentation received and use @2001-agile-create-an-epic
@@ -15,41 +18,89 @@ Create an agile epic based the initial documentation received and use @2001-agil
 
   - 1.2 [x] Create a `Feature` about the development
 
+**Note:** Attach the EPIC created previously
+
 ```bash
 Create a feature based on the epic and use @2002-agile-create-features-from-epics
 ```
 
+**Note:** Review if the rule generates several features and maybe it is possible to merge into a single one. If you prefer to have only one feature, ask it.
+
   - 1.3 [x] Create an `User story` and the `Acceptance criteria` in `Gherkin` format based on the requirements.
 
-```bash
-Create a user story based on the feature and the acceptance criteria using @2003-agile-create-user-stories
-```
-
-  - 1.5 [x] Create an `UML` Sequence diagrama about the functional requirements
+**Note:** Attach the EPIC and the Feature created previously
 
 ```bash
-Create the UML sequence diagram based on 2004-uml-sequence-diagram-from-agile-artifacts in plantuml
+Create a user story based on the feature and the acceptance criteria using the information provided with the cursor rule @2003-agile-create-user-stories
 ```
 
-  - 1.5 [ ] Create an `ADR` about the functional requirements
+  - 1.4 [x] Create an `UML` Sequence diagrama about the functional requirements
+
+**Note:** Attach the EPIC,Feature,User Story & Gherkin created previously
 
 ```bash
-Create the ADR about functional req
+Create the UML sequence diagram based in plantuml format using the information provided with the cursor rule @2004-uml-sequence-diagram-from-agile-artifacts
 ```
 
-  - 1.6 [ ] Create an `ADR` about the acceptance testing Strategy
+  - 1.5 [x] Create the `C4 Model` diagrams based on the requirements
+
+**Note:** Attach the EPIC,Feature,User Story, Gherkin & UML Sequence diagram created previously
 
 ```bash
-How to improve this gherkin? What questions do you consider useful
-to be answered in order to update this gherkin file?
+Create the C4 Model diagrams from the requirements in plantuml format using the information provided with the cursor rule @2005-c4-diagrams-about-solution
 ```
 
-2. [x] Create a Maven project
+**Note:** Review the diagrams, sometimes it is necessary to simplify the models.
 
-Create a Maven project to solve the problem
+  - 1.6 [x] Create an `ADR` about the functional requirements
+
+**Note:** Attach the EPIC,Feature,User Story, Gherkin, UML Sequence diagram & C4 Model diagrams created previously
+
+**Terminal/Cli development:**
+
+```bash
+Create the ADR about functional requirements using the cursor rule @2006-adr-create-functional-requirements-for-cli-development
+```
+
+**REST API development:**
+
+```bash
+Create the ADR about the functional requirements using the information provided with the cursor rule @2006-adr-create-functional-requirements-for-rest-api-development
+```
+
+  - 1.7 [x] Create an `ADR` about the acceptance testing Strategy
+
+**Note:** Attach User Story & Gherkin created previously
+
+```bash
+Create the ADR about the acceptance testing strategy using the information provided with the cursor rule @2007-adr-create-acceptance-testing-strategy
+```
+
+  - 1.8 [x] Create an `ADR` about the non functional requirements
+
+**Note:** Attach the EPIC,Feature,User Story, Gherkin, UML Sequence diagram & C4 Model diagrams created previously
+
+```bash
+Create the ADR about the functional requirements using the information provided with the cursor rule @2008-adr-create-non-functional-requirements-decisions
+```
+
+--
+
+- 2. [x] Create a Maven project
+
+  - 2.1. [x] Create a Maven project to solve the problem
 
 ```bash
 jbang setup@jabrena init --maven
+```
+
+**Note:** Remove the `pluginManagement` section in the the pom.xml because the default one is so much verbose.
+
+  - 2.2 [x] Update the pom.xml
+
+```bash
+Update the cursor rule using @101-java-maven-deps-and-plugins
+Verify the changes with ./mvnw clean verify
 ```
 
 3. [x] Develop an acceptance test

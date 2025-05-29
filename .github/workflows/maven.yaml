@@ -20,3 +20,5 @@ jobs:
         run: ./backup/problem2/mvnw --batch-mode --no-transfer-progress verify --file ./backup/problem2/pom.xml
       - name: Maven build problem 3
         run: ./backup/problem3/mvnw --batch-mode --no-transfer-progress verify --file ./backup/problem3/pom.xml
+      - name: Maven build problem 4
+        run: ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
