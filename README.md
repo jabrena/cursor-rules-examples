@@ -7,11 +7,16 @@ Probe the help of the **Cursor rules for Java** with non trivial Java problems.
 ## Getting started
 
 ```bash
+sdk install jbang
+jbang cache clear
+jbang catalog list jabrena
+jbang setup@jabrena init --cursor agile
+jbang setup@jabrena init --cursor java
+
 Create an agile development checklist using @2000-agile-checklist
 ```
 
-
---
+## Development
 
 - 2. [x] Create a Maven project
 
