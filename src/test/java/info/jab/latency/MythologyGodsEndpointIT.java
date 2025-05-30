@@ -11,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -26,14 +29,14 @@ import static org.hamcrest.Matchers.*;
  * - WireMock for stubbing external mythology APIs
  * - Static test data based on OpenAPI specification examples
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = MythologyApplication.class)
 @ActiveProfiles("test")
 class MythologyGodsEndpointIT {
 
     @LocalServerPort
     private int port;
 
-    private WireMockServer mythologyApiMock;
+    private List<WireMockServer> mythologyApiMocks = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -41,15 +44,15 @@ class MythologyGodsEndpointIT {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
 
-        // Set up single WireMock server for all external mythology API endpoints
-        setupMockServer();
+        // Set up WireMock servers for all external mythology API endpoints
+        setupMockServers();
         stubExternalMythologyAPIs();
     }
 
     @AfterEach
     void tearDown() {
-        // Stop WireMock server
-        stopMockServer();
+        // Stop all WireMock servers
+        stopMockServers();
     }
 
     @Test
@@ -88,51 +91,62 @@ class MythologyGodsEndpointIT {
                 .body("$", hasSize(greaterThanOrEqualTo(5)));
     }
 
-    private void setupMockServer() {
-        mythologyApiMock = new WireMockServer(WireMockConfiguration.options().port(8080));
-        mythologyApiMock.start();
+    private void setupMockServers() {
+        // Create separate WireMock servers for each mythology API as per application-test.yml
+        mythologyApiMocks.add(new WireMockServer(WireMockConfiguration.options().port(8081)));  // Greek
+        mythologyApiMocks.add(new WireMockServer(WireMockConfiguration.options().port(8082)));  // Roman
+        mythologyApiMocks.add(new WireMockServer(WireMockConfiguration.options().port(8083)));  // Nordic
+        mythologyApiMocks.add(new WireMockServer(WireMockConfiguration.options().port(8084)));  // Indian
+        mythologyApiMocks.add(new WireMockServer(WireMockConfiguration.options().port(8085)));  // Celtiberian
+
+        // Start all mock servers
+        mythologyApiMocks.forEach(WireMockServer::start);
     }
 
-    private void stopMockServer() {
-        if (mythologyApiMock != null) {
-            mythologyApiMock.stop();
-        }
+    private void stopMockServers() {
+        mythologyApiMocks.forEach(mockServer -> {
+            if (mockServer != null) {
+                mockServer.stop();
+            }
+        });
+        mythologyApiMocks.clear();
     }
 
     private void stubExternalMythologyAPIs() {
-        // Stub Greek mythology API endpoint using external JSON file
-        mythologyApiMock.stubFor(get(urlEqualTo("/api/greek"))
+        // Stub Greek mythology API endpoint (port 8081, path /greek)
+        mythologyApiMocks.get(0).stubFor(get(urlEqualTo("/greek"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBodyFile("wiremock/greek-gods.json")));
 
-        // Stub Roman mythology API endpoint using external JSON file
-        mythologyApiMock.stubFor(get(urlEqualTo("/api/roman"))
+        // Stub Roman mythology API endpoint (port 8082, path /roman)
+        mythologyApiMocks.get(1).stubFor(get(urlEqualTo("/roman"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBodyFile("wiremock/roman-gods.json")));
 
-        // Stub Nordic mythology API endpoint using external JSON file
-        mythologyApiMock.stubFor(get(urlEqualTo("/api/nordic"))
+        // Stub Nordic mythology API endpoint (port 8083, path /nordic)
+        mythologyApiMocks.get(2).stubFor(get(urlEqualTo("/nordic"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBodyFile("wiremock/nordic-gods.json")));
 
-        // Stub Indian mythology API endpoint using external JSON file
-        mythologyApiMock.stubFor(get(urlEqualTo("/api/indian"))
+        // Stub Indian mythology API endpoint (port 8084, path /indian)
+        mythologyApiMocks.get(3).stubFor(get(urlEqualTo("/indian"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBodyFile("wiremock/indian-gods.json")));
 
-        // Stub Celtiberian mythology API endpoint using external JSON file
-        mythologyApiMock.stubFor(get(urlEqualTo("/api/celtiberian"))
+        // Stub Celtiberian mythology API endpoint (port 8085, path /celtiberian)
+        mythologyApiMocks.get(4).stubFor(get(urlEqualTo("/celtiberian"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBodyFile("wiremock/celtiberian-gods.json")));
     }
 }
+

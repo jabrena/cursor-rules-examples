@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: servlet
+
+# External mythology API URLs
+mythology:
+  apis:
+    greek: https://my-json-server.typicode.com/jabrena/latency-problems/greek
+    roman: https://my-json-server.typicode.com/jabrena/latency-problems/roman
+    nordic: https://my-json-server.typicode.com/jabrena/latency-problems/nordic
+    indian: https://my-json-server.typicode.com/jabrena/latency-problems/indian
+    celtiberian: https://my-json-server.typicode.com/jabrena/latency-problems/celtiberian
+  timeout: 5000
+
+logging:
+  level:
+    info.jab.latency: DEBUG
+    root: INFO

@@ -55,10 +55,6 @@ It will fail because in this phase, doesn´t exist any implemention.
 - **Notes:**Review that the implementation use RestAssured.
 - **Notes2:**Review that the implementation not use Cucumber.
 
-- 1.2 [x] Improve pom.xml
-
-- **Notes:** Review that plugins are not located in pluginManagement
-
 4. [x] Implement the solution
 
 Implement the solution.
@@ -67,7 +63,6 @@ Implement the solution.
 Implement a solution in the package info.jab.latency from src.
 Create a solution and later add test classes.
 Dont´t change the acceptance tests.
-Don´t change the Interface defined in package info.jab.latency
 Verify the changes with the command: ./mvnw clean verify
 ```
 
@@ -75,6 +70,8 @@ Verify the changes with the command: ./mvnw clean verify
 Update the acceptance tests pointing to the real endpoints.
 Verify the changes with the command: ./mvnw clean verify
 ```
+
+./mvnw clean verify -Dmaven.build.cache.enabled=false
 
 ```xml
 <properties>
