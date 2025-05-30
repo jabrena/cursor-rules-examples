@@ -1,0 +1,20 @@
+server:
+  port: 0
+
+spring:
+  main:
+    web-application-type: servlet
+
+# External mythology API URLs for integration with WireMock
+mythology:
+  apis:
+    greek: http://localhost:8081/greek
+    roman: http://localhost:8082/roman
+    nordic: http://localhost:8083/nordic
+    indian: http://localhost:8084/indian
+    celtiberian: http://localhost:8085/celtiberian
+
+logging:
+  level:
+    info.jab.latency: DEBUG
+    com.github.tomakehurst.wiremock: WARN
