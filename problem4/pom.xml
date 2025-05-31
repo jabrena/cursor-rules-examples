@@ -3,8 +3,8 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>info.jab.demo</groupId>
-  <artifactId>maven-demo</artifactId>
+  <groupId>info.jab.latency</groupId>
+  <artifactId>problem4</artifactId>
   <version>0.1.0</version>
 
   <properties>

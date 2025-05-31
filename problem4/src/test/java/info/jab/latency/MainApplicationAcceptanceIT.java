@@ -69,8 +69,8 @@ class MainApplicationAcceptanceIT {
                 .statusCode(200)
                 // And: The response content type should be "application/json"
                 .contentType(ContentType.JSON)
-                // And: The response time should be less than 5 seconds
-                .time(lessThan(5000L))
+                // And: The response time should be less than 2.5 seconds
+                .time(lessThan(2500L))
                 // And: The response should contain JSON formatted mythology data
                 .body("$", notNullValue())
                 .body("size()", greaterThan(0))
@@ -108,35 +108,35 @@ class MainApplicationAcceptanceIT {
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBodyFile("wiremock/greek-gods.json")));
+                .withBodyFile("greek-gods.json")));
 
         // Stub Roman mythology API endpoint (/roman)
         mythologyApiMock.stubFor(get(urlEqualTo("/roman"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBodyFile("wiremock/roman-gods.json")));
+                .withBodyFile("roman-gods.json")));
 
         // Stub Nordic mythology API endpoint (/nordic)
         mythologyApiMock.stubFor(get(urlEqualTo("/nordic"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBodyFile("wiremock/nordic-gods.json")));
+                .withBodyFile("nordic-gods.json")));
 
         // Stub Indian mythology API endpoint (/indian)
         mythologyApiMock.stubFor(get(urlEqualTo("/indian"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBodyFile("wiremock/indian-gods.json")));
+                .withBodyFile("indian-gods.json")));
 
         // Stub Celtiberian mythology API endpoint (/celtiberian)
         mythologyApiMock.stubFor(get(urlEqualTo("/celtiberian"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBodyFile("wiremock/celtiberian-gods.json")));
+                .withBodyFile("celtiberian-gods.json")));
     }
 }
 
