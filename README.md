@@ -95,7 +95,7 @@ Review the coverage with ./mvnw clean verify jacoco:report -Pjacoco and increase
 - 4.5 Refactor the initial stable solution
 
 ```bash
-No recipe. ¯\_(ツ)_/¯
+No recipe, this is the added value of a good SSE. ¯\_(ツ)_/¯
 ```
 
 ## References
