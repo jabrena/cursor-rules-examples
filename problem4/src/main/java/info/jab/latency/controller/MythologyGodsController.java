@@ -19,7 +19,7 @@ import java.util.List;
  * Implements error handling and logging as per ADR-001 specifications.
  */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MythologyGodsController {
 
     private static final Logger logger = LoggerFactory.getLogger(MythologyGodsController.class);
@@ -35,21 +35,15 @@ public class MythologyGodsController {
      *
      * @return ResponseEntity containing list of GodDto objects with HTTP 200 status
      */
-    @GetMapping(value = "/gods", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/gods")
     public ResponseEntity<List<GodDto>> getAllGods() {
         logger.info("Received request for all mythology gods");
 
-        try {
-            List<GodDto> gods = mythologyGodsService.getAllGods();
+        List<GodDto> gods = mythologyGodsService.getAllGods();
 
-            logger.info("Successfully returned {} gods from {} mythologies",
-                gods.size(), gods.stream().map(GodDto::mythology).distinct().count());
+        logger.info("Successfully returned {} gods from {} mythologies",
+            gods.size(), gods.stream().map(GodDto::mythology).distinct().count());
 
-            return ResponseEntity.ok(gods);
-
-        } catch (Exception e) {
-            logger.error("Error occurred while fetching mythology gods", e);
-            throw e; // Let global exception handler deal with it
-        }
+        return ResponseEntity.ok(gods);
     }
 }

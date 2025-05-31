@@ -10,8 +10,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.time.Instant;
 import java.util.Map;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Global exception handler for the mythology aggregation API.
@@ -41,26 +39,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(errorResponse);
-    }
-
-    /**
-     * Handles timeout exceptions and returns a 504 Gateway Timeout.
-     */
-    @ExceptionHandler({TimeoutException.class, CompletionException.class})
-    public ResponseEntity<Map<String, Object>> handleTimeoutException(
-            Exception ex, WebRequest request) {
-
-        logger.warn("Timeout occurred while calling external mythology services", ex);
-
-        Map<String, Object> errorResponse = Map.of(
-            "error", "GATEWAY_TIMEOUT",
-            "message", "External mythology services did not respond within 5 seconds",
-            "timestamp", Instant.now().toString()
-        );
-
-        return ResponseEntity
-            .status(HttpStatus.GATEWAY_TIMEOUT)
             .body(errorResponse);
     }
 

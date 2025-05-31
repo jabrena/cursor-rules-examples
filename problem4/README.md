@@ -26,7 +26,9 @@ Create an agile development checklist using @2000-agile-checklist
 jbang setup@jabrena init --maven
 ```
 
+
 **Note:** Remove the `pluginManagement` section in the the pom.xml because the default one is so much verbose.
+
 
   - 2.2 [x] Update the pom.xml
 
@@ -84,11 +86,6 @@ Verify the changes with the command: ./mvnw clean verify
     <artifactId>wiremock-standalone</artifactId>
     <version>${wiremock.version}</version>
     <scope>test</scope>
-</dependency>
-<dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-    <version>${jackson.version}</version>
 </dependency>
 ```
 
