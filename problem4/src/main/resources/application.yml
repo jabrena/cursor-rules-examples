@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: servlet
+  output:
+    ansi:
+      enabled: always
+
+# External mythology API configuration
+mythology:
+  base-url: https://my-json-server.typicode.com/jabrena/latency-problems
+  timeout: 5000
+
+logging:
+  level:
+    info.jab.latency: DEBUG
+    root: INFO

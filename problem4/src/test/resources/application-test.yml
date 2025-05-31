@@ -1,0 +1,16 @@
+server:
+  port: 0
+
+spring:
+  main:
+    web-application-type: servlet
+
+# External mythology API configuration for integration with WireMock
+mythology:
+  base-url: http://localhost:8081
+  timeout: 5000
+
+logging:
+  level:
+    info.jab.latency: DEBUG
+    com.github.tomakehurst.wiremock: WARN
