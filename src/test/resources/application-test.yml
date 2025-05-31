@@ -5,14 +5,10 @@ spring:
   main:
     web-application-type: servlet
 
-# External mythology API URLs for integration with WireMock
+# External mythology API configuration for integration with WireMock
 mythology:
-  apis:
-    greek: http://localhost:8081/greek
-    roman: http://localhost:8082/roman
-    nordic: http://localhost:8083/nordic
-    indian: http://localhost:8084/indian
-    celtiberian: http://localhost:8085/celtiberian
+  base-url: http://localhost:8081
+  timeout: 5000
 
 logging:
   level:

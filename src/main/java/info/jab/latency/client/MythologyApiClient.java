@@ -11,6 +11,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Client service for calling external mythology APIs.
@@ -38,14 +39,8 @@ public class MythologyApiClient {
      * @return list of god names, empty list if the API call fails
      */
     public List<String> fetchGods(Mythology mythology) {
-        String url = properties.getApis().get(mythology.getName());
-
-        if (url == null) {
-            logger.warn("No URL configured for mythology: {}", mythology.getName());
-            return Collections.emptyList();
-        }
-
         try {
+            String url = properties.getUrlForMythology(mythology.getName());
             logger.debug("Fetching {} gods from: {}", mythology.getName(), url);
 
             List<String> gods = restClient.get()
@@ -54,13 +49,15 @@ public class MythologyApiClient {
                 .body(new ParameterizedTypeReference<List<String>>() {});
 
             logger.debug("Successfully fetched {} gods for {}",
-                gods != null ? gods.size() : 0, mythology.getName());
+                Objects.nonNull(gods) ? gods.size() : 0, mythology.getName());
 
-            return gods != null ? gods : Collections.emptyList();
+            return Objects.nonNull(gods) ? gods : Collections.emptyList();
 
+        } catch (IllegalStateException e) {
+            logger.error("Configuration error for mythology {}: {}", mythology.getName(), e.getMessage());
+            return Collections.emptyList();
         } catch (RestClientException e) {
-            logger.warn("Failed to fetch {} gods from {}: {}",
-                mythology.getName(), url, e.getMessage());
+            logger.warn("Failed to fetch {} gods: {}", mythology.getName(), e.getMessage());
             return Collections.emptyList();
         }
     }

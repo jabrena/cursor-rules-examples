@@ -1,28 +1,30 @@
 package info.jab.latency.config;
 
+import java.util.Objects;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * Configuration properties for external mythology APIs.
  *
  * Maps to the 'mythology' properties in application.yml.
+ * Uses a single base URL and constructs specific endpoints by appending mythology names.
  */
 @Component
 @ConfigurationProperties(prefix = "mythology")
 public class MythologyApiProperties {
 
-    private Map<String, String> apis;
+    @SuppressWarnings("NullAway.Init")
+    private String baseUrl;
     private int timeout = 5000; // Default 5 seconds
 
-    public Map<String, String> getApis() {
-        return apis;
+    public String getBaseUrl() {
+        return baseUrl;
     }
 
-    public void setApis(Map<String, String> apis) {
-        this.apis = apis;
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     public int getTimeout() {
@@ -31,5 +33,18 @@ public class MythologyApiProperties {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    /**
+     * Constructs the full URL for a specific mythology endpoint.
+     *
+     * @param mythologyName the name of the mythology (e.g., "greek", "roman")
+     * @return the complete URL for the mythology API endpoint
+     */
+    public String getUrlForMythology(String mythologyName) {
+        if (Objects.isNull(baseUrl) || baseUrl.trim().isEmpty()) {
+            throw new IllegalStateException("Base URL is not configured");
+        }
+        return baseUrl.endsWith("/") ? baseUrl + mythologyName : baseUrl + "/" + mythologyName;
     }
 }

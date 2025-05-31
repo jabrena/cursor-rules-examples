@@ -201,7 +201,7 @@
               -XepOpt:NullAway:CheckOptionalEmptiness=true \
               -XepOpt:NullAway:HandleTestAssertionLibraries=true \
               -XepOpt:NullAway:AssertsEnabled=true \
-              -XepOpt:NullAway:AnnotatedPackages=info.jab.demo
+              -XepOpt:NullAway:AnnotatedPackages=info.jab.latency
             </arg>
           </compilerArgs>
           <annotationProcessorPaths>

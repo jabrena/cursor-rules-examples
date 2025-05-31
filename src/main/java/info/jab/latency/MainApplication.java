@@ -9,9 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * by the integration tests to start the application context.
  */
 @SpringBootApplication
-public class MythologyApplication {
+public class MainApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MythologyApplication.class, args);
+        SpringApplication.run(MainApplication.class, args);
     }
 }
