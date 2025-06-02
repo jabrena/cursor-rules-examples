@@ -10,6 +10,15 @@ Develop a REST API which read Greek god data which it is synchronized periodical
 
 ![](./structurizr-1-Component-001.png)
 
-# Database Schema
+## Database Schema
 
 [SQL Schema](./schema.sql)
+
+## Open API
+
+- [Public REST API](./greekController-oas.yaml)
+- [Third Party Service](./my-json-server-oas.yaml)
+
+## Links of interest
+
+- https://editor-next.swagger.io/
