@@ -1,16 +1,8 @@
-# Cursor Rules Examples
+# Process
 
-## Motivation
+This document could be used as a procedure to solve any latency problem
 
-Probe that using **Cursor rules for Agile & Java** are useful when the Software Engineer have to face non trivial Java problems.
-
-## Getting started
-
-### 1. Review the Latency problems
-
-- https://github.com/jabrena/latency-problems
-
-### 2. Onboarding
+## 1. Onboarding
 
 Intall the cursor rules which you are going to use in your workspace
 
@@ -22,9 +14,9 @@ jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-agile
 jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-java
 ```
 
-### 3. Requirements discovery
+## 2. Requirements discovery
 
-Generate the software requirements based on the initial problem description
+- 2.1 [ ] Generate the software requirements based on the initial problem description
 
 ```bash
 Create an agile development checklist using @2000-agile-checklist
@@ -36,9 +28,9 @@ Create an agile development checklist using @2000-agile-checklist
 jbang puml-to-png@jabrena --watch problem5/docs/requirements
 ```
 
-### 4.Implement the solution
+## 3. Implement the solution
 
-- 4.1 Setup the Maven project
+- 3.1 [ ] Setup the Maven project
 
 ```bash
 jbang setup@jabrena init --maven
@@ -46,14 +38,14 @@ jbang setup@jabrena init --spring-boot
 jbang setup@jabrena init --quarkus
 ```
 
-**Note:** Remove the `pluginManagement` section in the the pom.xml because the default one is so much verbose.
+**Note:** Remove the `pluginManagement` section in the the pom.xml because it is not necessary in all cases.
 
 ```bash
 Update the cursor rule using @101-java-maven-deps-and-plugins
 Verify the changes with ./mvnw clean verify
 ```
 
-- 4.2 Implement the Acceptance test ([Outside-in TDD London](https://outsidein.dev/concepts/outside-in-tdd/)) based on the Gherkin file
+- 3.2 [ ] Implement the Acceptance test ([Outside-in TDD London](https://outsidein.dev/concepts/outside-in-tdd/)) based on the Gherkin file
 
 ![](./docs/double-loop-tdd.png)
 
@@ -81,7 +73,7 @@ It will fail because in this phase, doesn´t exist any implemention.
 </dependency>
 ```
 
-- 4.3 Implement the solution to pass the acceptance tests
+- 3.3 [ ] Implement the solution to pass the acceptance tests
 
 ```bash
 Implement a solution in the package info.jab.latency from src.
@@ -98,29 +90,14 @@ jwebserver -p 8002 -d "$(pwd)/target/site/jacoco"
 ./mvnw clean verify -Dmaven.build.cache.enabled=false
 ```
 
-- 4.4 Implement the tests
+- 3.4 [ ] Implement the tests
 
 ```bash
 Review the coverage with ./mvnw clean verify jacoco:report -Pjacoco and increase the coverage in instructions, classes & branches until 80% @problem4
 ```
 
-- 4.5 Refactor the initial stable solution
+- 3.5 [ ] Refactor the initial stable solution
 
 ```bash
 No recipe, this is the added value of a good SSE. ¯\_(ツ)_/¯
 ```
-
-## References
-
-- https://editor-next.swagger.io/
-- https://www.plantuml.com/plantuml/uml/
-- https://cekrem.github.io/posts/double-loop-tdd-blog-engine-pt2/
-- ...
-- https://github.com/jabrena/cursor-rules-methodology
-- https://github.com/jabrena/cursor-rules-agile
-- https://github.com/jabrena/cursor-rules-java
-- https://github.com/jabrena/cursor-rules-examples
-- https://github.com/jabrena/latency-problems
-- https://github.com/jabrena/101-cursor
-- https://github.com/jabrena/setup-cli
-- https://github.com/jabrena/jbang-catalog
