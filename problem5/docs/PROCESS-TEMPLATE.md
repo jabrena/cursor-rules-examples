@@ -46,7 +46,7 @@ Update the cursor rule using @101-java-maven-deps-and-plugins
 Verify the changes with ./mvnw clean verify
 ```
 
-- 3.2 [ ] Implement the Acceptance test ([Outside-in TDD London](https://outsidein.dev/concepts/outside-in-tdd/)) based on the Gherkin file
+- 3.2 [x] Implement the Acceptance test ([Outside-in TDD London](https://outsidein.dev/concepts/outside-in-tdd/)) based on the Gherkin file
 
 ![](./docs/double-loop-tdd.png)
 
@@ -59,22 +59,7 @@ Don´t develop any source code, only implement the acceptance test.
 It will fail because in this phase, doesn´t exist any implemention.
 ```
 
-**Note:** if the REST/Cli development need to interact with a External third party service, it could be possible that the acceptance tests Stub the external integration also.
-
-```xml
-<properties>
-    <wiremock.version>3.13.0</wiremock.version>
-</properties>
-
-<dependency>
-    <groupId>org.wiremock</groupId>
-    <artifactId>wiremock-standalone</artifactId>
-    <version>${wiremock.version}</version>
-    <scope>test</scope>
-</dependency>
-```
-
-- 3.3 [ ] Implement the solution to pass the acceptance tests
+- 3.3 [x] Implement the solution to pass the acceptance tests
 
 ```bash
 Implement a solution in the package info.jab.latency from src.
