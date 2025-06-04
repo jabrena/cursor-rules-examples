@@ -4,19 +4,20 @@ This document could be used as a procedure to solve any latency problem
 
 ## 1. Onboarding
 
-Intall the cursor rules which you are going to use in your workspace
+- 1.1 [x] Intall the cursor rules which you are going to use in your workspace
 
 ```bash
 sdk install jbang
 jbang cache clear
 jbang catalog list jabrena
+
 jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-agile
 jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-java
 ```
 
 ## 2. Requirements discovery
 
-- 2.1 [ ] Generate the software requirements based on the initial problem description
+- 2.1 [x] Generate the software requirements based on the initial problem description
 
 ```bash
 Create an agile development checklist using @2000-agile-checklist
@@ -36,9 +37,9 @@ jbang puml-to-png@jabrena --watch problem5/docs/requirements
 jbang setup@jabrena init --maven
 jbang setup@jabrena init --spring-boot
 jbang setup@jabrena init --quarkus
-```
 
-**Note:** Remove the `pluginManagement` section in the the pom.xml because it is not necessary in all cases.
+./mvnw clean verify
+```
 
 ```bash
 Update the cursor rule using @101-java-maven-deps-and-plugins

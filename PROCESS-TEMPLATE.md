@@ -4,7 +4,7 @@ This document could be used as a procedure to solve any latency problem
 
 ## 1. Onboarding
 
-Intall the cursor rules which you are going to use in your workspace
+- 1.1 [ ] Intall the cursor rules which you are going to use in your workspace
 
 ```bash
 sdk install jbang
@@ -36,13 +36,13 @@ jbang puml-to-png@jabrena --watch problem5/docs/requirements
 jbang setup@jabrena init --maven
 jbang setup@jabrena init --spring-boot
 jbang setup@jabrena init --quarkus
-```
 
-**Note:** Remove the `pluginManagement` section in the the pom.xml because it is not necessary in all cases.
+./mvnw clean verify
+```
 
 ```bash
 Update the cursor rule using @101-java-maven-deps-and-plugins
-Verify the changes with ./mvnw clean verify
+./mvnw clean verify
 ```
 
 - 3.2 [ ] Implement the Acceptance test ([Outside-in TDD London](https://outsidein.dev/concepts/outside-in-tdd/)) based on the Gherkin file

@@ -23,3 +23,5 @@ jobs:
         run: cd problem3/ && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
       - name: Maven build problem 4
         run: cd problem4/ && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
+      - name: Maven build problem 5
+        run: cd problem5/ && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
