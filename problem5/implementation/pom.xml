@@ -30,12 +30,13 @@
 		<java.version>24</java.version>
 		<testcontainers.version>1.20.3</testcontainers.version>
 		<flyway.version>10.20.1</flyway.version>
+		<wiremock.version>3.13.0</wiremock.version>
 
 		<!-- Coverage -->
 		<coverage.level>0.15</coverage.level>
 		<maven-plugins-jacoco.version>0.8.13</maven-plugins-jacoco.version>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<!-- TestContainers BOM for version management -->
@@ -75,7 +76,7 @@
 			<artifactId>flyway-core</artifactId>
 			<version>${flyway.version}</version>
 		</dependency>
-		
+
 		<!-- Flyway PostgreSQL support -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -137,6 +138,14 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.6.0</version>
+		</dependency>
+
+		<!-- WireMock for mocking external APIs -->
+		<dependency>
+			<groupId>org.wiremock</groupId>
+			<artifactId>wiremock-standalone</artifactId>
+			<version>${wiremock.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
