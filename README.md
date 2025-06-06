@@ -69,7 +69,13 @@ Dont´t change the acceptance tests.
 Verify the changes with the command: ./mvnw clean verify
 ```
 
+- 4.3 Implement the solution to pass the acceptance tests
+
 **Note:** At the end of this phase, the development should build with `./mvnw clean verify` and at runtime the solution will work.
+
+- 4.4 Implement the rest of the requirements.
+
+**Note:** Follow [the task list](./problem5/requirements/agile/US-001-tasks-api-greek-gods-data-retrieval.md) in orther to build the solution in a incremental way.
 
 ### 5.Refactoring
 
