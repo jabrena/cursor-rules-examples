@@ -14,14 +14,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import info.jab.latency.config.PostgreTestContainers;
 
 import java.util.Objects;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +37,6 @@ import static org.mockito.Mockito.when;
  * Uses @SpringBootTest for full Spring context and WireMock for HTTP mocking.
  */
 @SpringBootTest
-@Testcontainers
 @TestPropertySource(properties = {
     "external-api.greek-gods.endpoint=/gods",
     "external-api.greek-gods.timeout=5000",
@@ -50,24 +44,13 @@ import static org.mockito.Mockito.when;
     "background-sync.greek-gods.fixed-rate=3600000",
     "background-sync.greek-gods.initial-delay=1000"
 })
+@PostgreTestContainers
 class BackgroundSyncServiceIT {
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14-alpine")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test");
 
     private static WireMockServer wireMockServer;
 
     @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
-        registry.add("spring.flyway.enabled", () -> "true");
-
+    static void configureWireMockProperties(DynamicPropertyRegistry registry) {
         // Configure WireMock server URL
         if (Objects.isNull(wireMockServer)) {
             wireMockServer = new WireMockServer(WireMockConfiguration.options().port(0));
@@ -76,7 +59,7 @@ class BackgroundSyncServiceIT {
         registry.add("external-api.greek-gods.base-url", () -> "http://localhost:" + wireMockServer.port());
     }
 
-        @Autowired
+    @Autowired
     private BackgroundSyncService backgroundSyncService;
 
     @MockBean
@@ -98,7 +81,7 @@ class BackgroundSyncServiceIT {
         }
     }
 
-        @Test
+    @Test
     @DisplayName("Should synchronize data from external API to database")
     void shouldSynchronizeDataFromExternalApiToDatabase() {
         // Arrange - Mock HTTP response
@@ -121,7 +104,7 @@ class BackgroundSyncServiceIT {
         verify(greekGodsRepository, times(3)).save(any(GreekGod.class));
     }
 
-        @Test
+    @Test
     @DisplayName("Should handle external API connection failure gracefully")
     void shouldHandleExternalApiConnectionFailureGracefully() {
         // Arrange - Mock HTTP failure
@@ -140,7 +123,7 @@ class BackgroundSyncServiceIT {
         }
     }
 
-        @Test
+    @Test
     @DisplayName("Should skip duplicate data during synchronization")
     void shouldSkipDuplicateDataDuringSynchronization() {
         // Arrange - Mock HTTP response

@@ -19,16 +19,16 @@ import java.util.List;
 
 /**
  * REST Controller for Greek Gods API endpoints.
- * 
+ *
  * Handles HTTP requests for Greek mythology data retrieval.
  * Following OpenAPI 3.0.3 specification for /api/v1/gods/greek endpoint.
- * 
+ *
  * This controller implements the acceptance criteria:
  * - AC1: Successfully retrieve complete list of Greek god names
  * - AC3: Proper HTTP status codes (200 OK for success)
  * - AC4: Simple JSON array response format
  * - AC5: Complete dataset of 20 Greek god names
- * 
+ *
  * Architecture: Following C4 Model Component structure
  * Controller → Service → Repository → Database
  */
@@ -41,7 +41,7 @@ public class GreekGodsController {
 
     /**
      * Constructor injection for GreekGodsService dependency.
-     * 
+     *
      * @param greekGodsService Service layer for Greek gods business logic
      */
     public GreekGodsController(GreekGodsService greekGodsService) {
@@ -50,12 +50,12 @@ public class GreekGodsController {
 
     /**
      * GET /api/v1/gods/greek
-     * 
+     *
      * Retrieves a complete list of Greek god names.
-     * 
+     *
      * Response format: Simple JSON array of strings
      * Example: ["Zeus", "Hera", "Poseidon", ...]
-     * 
+     *
      * @return ResponseEntity with List<String> containing 20 Greek god names
      *         HTTP 200 OK on success
      */
@@ -74,6 +74,14 @@ public class GreekGodsController {
             )
         ),
         @ApiResponse(
+            responseCode = "405",
+            description = "Method not allowed - only GET requests are supported",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = ProblemDetail.class)
+            )
+        ),
+        @ApiResponse(
             responseCode = "500",
             description = "Internal server error - database connection failure or other system error",
             content = @Content(
@@ -88,4 +96,4 @@ public class GreekGodsController {
         List<String> greekGods = greekGodsService.getAllGreekGodNames();
         return ResponseEntity.ok(greekGods);
     }
-} 
+}

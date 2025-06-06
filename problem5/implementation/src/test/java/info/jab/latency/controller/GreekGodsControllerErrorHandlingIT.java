@@ -16,15 +16,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Integration tests for GreekGodsController error handling scenarios using MockMvc.
- * 
+ *
  * Tests the API's ability to handle various error conditions gracefully:
  * - Database connection failures
  * - Service layer exceptions
  * - Standardized error response format
- * 
+ *
  * Following ATDD approach - these tests will FAIL initially since error handling
  * is not implemented yet. This is the RED phase of Red-Green-Refactor cycle.
- * 
+ *
  * Uses @WebMvcTest to test only the web layer with mocked dependencies.
  * Architecture: Testing the complete request flow
  * HTTP Request → Controller → Service → [Mocked Error Scenarios]
@@ -50,16 +50,16 @@ class GreekGodsControllerErrorHandlingIT {
         // 1. No error handling is implemented in the controller
         // 2. No GlobalExceptionHandler exists to catch database errors
         // 3. The exception will bubble up and cause a 500 error with default Spring error format
-        
+
         // WHEN: A request is made to the API during a simulated database failure
         // THEN: The API should handle the error gracefully
-        
+
         // This test expects that when database errors occur, the API should:
         // - Return HTTP 500 Internal Server Error
         // - Provide a standardized error response format
         // - Include appropriate error message
         // - Not expose internal system details
-        
+
         mockMvc.perform(get("/api/v1/gods/greek")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())  // Expected: 500 when database fails
@@ -70,19 +70,19 @@ class GreekGodsControllerErrorHandlingIT {
                 .andExpect(jsonPath("$.timestamp").exists());
     }
 
-    @Test 
+    @Test
     @Disabled("This error should be handled in the repository")
     void should_handle_service_unavailable_gracefully() throws Exception {
         // GIVEN: Service throws an exception simulating service unavailability
         when(greekGodsService.getAllGreekGodNames())
                 .thenThrow(new IllegalStateException("Service temporarily unavailable"));
-        
+
         // This test simulates a scenario where the service layer fails
         // Expected behavior: Proper error response without system crash
-        
+
         // NOTE: This test will FAIL initially - no error handling implemented yet
         // This is expected in ATDD Red-Green-Refactor cycle
-        
+
         mockMvc.perform(get("/api/v1/gods/greek")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())  // Expected: 500 for service errors
@@ -96,13 +96,13 @@ class GreekGodsControllerErrorHandlingIT {
         // GIVEN: Service throws a generic exception
         when(greekGodsService.getAllGreekGodNames())
                 .thenThrow(new RuntimeException("Internal system error"));
-        
+
         // This test validates the standardized error response format
         // Expected format: { "error": "message", "status": 500, "timestamp": "..." }
-        
+
         // NOTE: This test will FAIL initially - no GlobalExceptionHandler exists yet
         // This confirms we're following ATDD approach correctly
-        
+
         mockMvc.perform(get("/api/v1/gods/greek")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())  // Expected: 500 for internal errors
@@ -119,10 +119,10 @@ class GreekGodsControllerErrorHandlingIT {
         // GIVEN: Service throws an exception with sensitive internal details
         when(greekGodsService.getAllGreekGodNames())
                 .thenThrow(new RuntimeException("Connection to database server db-prod-001.internal.company.com:5432 failed"));
-        
+
         // This test ensures that internal system details are not exposed to clients
         // Error messages should be sanitized for security
-        
+
         mockMvc.perform(get("/api/v1/gods/greek")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
@@ -132,4 +132,4 @@ class GreekGodsControllerErrorHandlingIT {
                 .andExpect(jsonPath("$.error").value(not(containsString("db-prod-001.internal"))))
                 .andExpect(jsonPath("$.message").value(not(containsString("5432"))));
     }
-} 
+}

@@ -17,17 +17,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Integration tests for Greek Gods API endpoints using MockMvc.
- * 
+ *
  * Tests the complete HTTP request/response cycle including:
  * - REST Controller endpoint mapping
  * - JSON response format validation
  * - HTTP status code verification
  * - Response content validation
- * 
+ *
  * Uses @WebMvcTest to test only the web layer with mocked dependencies.
  */
 @WebMvcTest(GreekGodsController.class)
-public class GreekGodsApiTest {
+class GreekGodsApiTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,7 +43,7 @@ public class GreekGodsApiTest {
 
     /**
      * Integration test for GET /api/v1/gods/greek endpoint.
-     * 
+     *
      * Validates:
      * - HTTP 200 OK status code
      * - Content-Type: application/json
@@ -67,7 +67,7 @@ public class GreekGodsApiTest {
 
     /**
      * Integration test verifying the endpoint returns exactly 20 Greek god names.
-     * 
+     *
      * This test validates the complete dataset requirement from acceptance criteria.
      */
     @Test
@@ -86,7 +86,7 @@ public class GreekGodsApiTest {
 
     /**
      * Integration test for response format validation.
-     * 
+     *
      * Validates that the response is a simple JSON array of strings,
      * not a complex object structure.
      */
@@ -108,10 +108,9 @@ public class GreekGodsApiTest {
 
     /**
      * Integration test for HTTP method validation.
-     * 
+     *
      * Ensures only GET requests are supported on this endpoint.
      */
-    @Disabled
     @Test
     void testGreekGodsEndpoint_OnlySupportsGetMethod() throws Exception {
         // POST should return 405 Method Not Allowed
@@ -131,10 +130,9 @@ public class GreekGodsApiTest {
 
     /**
      * Integration test for non-existent endpoint validation.
-     * 
+     *
      * Validates that requests to similar but incorrect paths return 404.
      */
-    @Disabled
     @Test
     void testIncorrectEndpointPaths_Return404() throws Exception {
         // Test similar but incorrect paths
@@ -150,4 +148,4 @@ public class GreekGodsApiTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-} 
+}

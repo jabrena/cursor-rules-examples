@@ -1,7 +1,7 @@
 spring:
   application:
     name: greek-gods-api-test
-  
+
   # Flyway configuration for tests - let TestContainers provide datasource
   flyway:
     enabled: true
@@ -16,4 +16,4 @@ logging:
   level:
     info.jab.latency: DEBUG
     org.testcontainers: DEBUG
-    org.flywaydb: DEBUG 
+    org.flywaydb: DEBUG
