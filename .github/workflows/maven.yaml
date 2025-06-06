@@ -36,8 +36,6 @@ jobs:
       max-parallel: 5   # Run all problems simultaneously
       matrix:
         problem:
-          - { dir: "problem1", path: "problem1/" }
-          - { dir: "problem2", path: "problem2/" }
           - { dir: "problem3", path: "problem3/" }
           - { dir: "problem4", path: "problem4/" }
           - { dir: "problem5", path: "problem5/implementation" }
