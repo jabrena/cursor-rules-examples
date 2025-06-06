@@ -38,7 +38,7 @@ Create an agile development checklist using @2000-agile-checklist
 
 - 4.1 Setup the Maven project
 
-Depending of the requirements and the requirements will use one command or another
+Depending of the requirements and the requirements will use one command or another:
 
 ```bash
 jbang setup@jabrena init --maven
@@ -57,6 +57,8 @@ Implement an acceptance tests in the package info.jab.latency for the scenarios
 Don´t develop any source code, only implement the acceptance test.
 It will fail because in this phase, doesn´t exist any implemention.
 ```
+
+![](./docs/atdd.png)
 
 - 4.3 Implement the solution to pass the acceptance tests
 
