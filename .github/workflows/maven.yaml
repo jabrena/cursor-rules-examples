@@ -36,9 +36,11 @@ jobs:
       max-parallel: 5   # Run all problems simultaneously
       matrix:
         problem:
-          - { dir: "problem3", path: "problem3/" }
-          - { dir: "problem4", path: "problem4/" }
-          - { dir: "problem5", path: "problem5/implementation" }
+          - { dir: "problem1", path: "problem1/", spring_boot: false }
+          - { dir: "problem2", path: "problem2/", spring_boot: false }
+          - { dir: "problem3", path: "problem3/", spring_boot: true }
+          - { dir: "problem4", path: "problem4/", spring_boot: true }
+          - { dir: "problem5", path: "problem5/implementation", spring_boot: true }
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,6 +51,7 @@ jobs:
           java-version: '24'
           cache: 'maven'
       - name: Spring Boot startup test ${{ matrix.problem.dir }}
+        if: ${{ matrix.problem.spring_boot }}
         run: |
           cd ${{ matrix.problem.path }}
           echo "Starting Spring Boot application for ${{ matrix.problem.dir }}..."
@@ -62,3 +65,6 @@ jobs:
               exit $exit_code
             fi
           }
+      - name: Skip Spring Boot test ${{ matrix.problem.dir }}
+        if: ${{ !matrix.problem.spring_boot }}
+        run: echo "Skipping Spring Boot startup test for ${{ matrix.problem.dir }} (not a Spring Boot application)"
