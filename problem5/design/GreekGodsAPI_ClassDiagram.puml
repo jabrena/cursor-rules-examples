@@ -5,6 +5,21 @@ skinparam classFontStyle bold
 skinparam packageStyle rectangle
 
 ' Package declarations
+package "info.jab.latency" {
+    class MainApplication {
+        + main(args: String[]) : void
+    }
+}
+
+package "info.jab.latency.config" {
+    class RestClientConfig {
+        + greekGodsRestClient(baseUrl: String, timeoutMs: int) : RestClient
+    }
+
+    class SchedulingConfig {
+    }
+}
+
 package "info.jab.latency.controller" {
     class GreekGodsController {
         - greekGodsService : GreekGodsService
@@ -21,31 +36,41 @@ package "info.jab.latency.controller" {
     }
 }
 
+package "info.jab.latency.entity" {
+    class GreekGod <<record>> {
+        + id : Long
+        + name : String
+        --
+        + GreekGod(name: String)
+        + GreekGod(id: Long, name: String)
+    }
+}
+
+package "info.jab.latency.repository" {
+    interface GreekGodsRepository {
+        + findAllGodNames() : List<String>
+        + existsByName(name: String) : boolean
+    }
+}
+
 package "info.jab.latency.service" {
     class GreekGodsService {
         - logger : Logger
-        - EXPECTED_GOD_COUNT : int = 20
         - greekGodsRepository : GreekGodsRepository
         --
         + GreekGodsService(greekGodsRepository: GreekGodsRepository)
         + getAllGreekGodNames() : List<String>
-        + isDatasetComplete() : boolean
-        + getGreekGodsCount() : int
-        - validateDataIntegrity(greekGods: List<String>) : void
     }
 
     class BackgroundSyncService {
         - logger : Logger
         - restClient : RestClient
         - apiEndpoint : String
-        - timeoutMs : int
-        - syncEnabled : boolean
         - transactionalSyncService : GreekGodsSyncTransactionalService
         --
-        + BackgroundSyncService(baseUrl: String, endpoint: String, timeoutMs: int, syncEnabled: boolean, transactionalSyncService: GreekGodsSyncTransactionalService)
+        + BackgroundSyncService(restClient: RestClient, endpoint: String, transactionalSyncService: GreekGodsSyncTransactionalService)
         + synchronizeData() : void
-        - fetchDataFromExternalAPI() : List<Map<String,Object>>
-        - generateSyncId() : String
+        - fetchDataFromExternalAPI() : List<String>
     }
 
     class GreekGodsSyncTransactionalService {
@@ -53,83 +78,54 @@ package "info.jab.latency.service" {
         - greekGodsRepository : GreekGodsRepository
         --
         + GreekGodsSyncTransactionalService(greekGodsRepository: GreekGodsRepository)
-        + performTransactionalSync(externalData: List<Map<String,Object>>, syncId: String) : SyncResult
-        - transformToGreekGods(externalData: List<Map<String,Object>>, syncId: String) : List<GreekGod>
-        - mapToGreekGod(externalRecord: Map<String,Object>) : GreekGod
-        - extractName(record: Map<String,Object>) : String
-        - saveGreekGodsToDatabase(greekGods: List<GreekGod>, syncId: String) : SyncResult
-    }
-
-    class SyncResult {
-        + inserted : int = 0
-        + duplicatesSkipped : int = 0
-        + errors : int = 0
+        + performTransactionalSync(externalData: List<String>) : void
     }
 }
 
-package "info.jab.latency.repository" {
-    interface GreekGodsRepository {
-        + findAllGodNames() : List<String>
-        + findByName(name: String) : GreekGod
-        + existsByName(name: String) : boolean
-        + findAllOrderByName() : List<GreekGod>
+' External Dependencies (Spring Framework)
+package "External Dependencies" {
+    interface ListCrudRepository <<Spring Data>> {
+    }
+
+    class RestClient <<Spring Web>> {
+    }
+
+    class ResponseEntity <<Spring Web>> {
+    }
+
+    class ProblemDetail <<Spring Web>> {
     }
 }
 
-package "info.jab.latency.entity" {
-    class GreekGod {
-        - id : Long
-        - name : String
-        --
-        + GreekGod()
-        + GreekGod(name: String)
-        + GreekGod(id: Long, name: String)
-        + getId() : Long
-        + setId(id: Long) : void
-        + getName() : String
-        + setName(name: String) : void
-        + toString() : String
-        + equals(o: Object) : boolean
-        + hashCode() : int
-    }
-}
+' Relationships - Dependency Injection
+GreekGodsController --> GreekGodsService : dependency injection
+GreekGodsService --> GreekGodsRepository : dependency injection
+BackgroundSyncService --> RestClient : dependency injection
+BackgroundSyncService --> GreekGodsSyncTransactionalService : dependency injection
+GreekGodsSyncTransactionalService --> GreekGodsRepository : dependency injection
 
-package "info.jab.latency.config" {
-    class SchedulingConfig {
-    }
-}
+' Relationships - Extends/Implements
+GreekGodsRepository --|> ListCrudRepository : extends
 
-package "info.jab.latency" {
-    class MainApplication {
-        + main(args: String[]) : void
-    }
-}
-
-' Spring Framework External Dependencies
-interface CrudRepository<T,ID> <<Spring Data>> {
-}
-
-' Relationships - Composition and Dependencies
-GreekGodsController ||--o{ GreekGodsService : uses
-GreekGodsService ||--o{ GreekGodsRepository : uses
-GreekGodsRepository --|> CrudRepository : extends
+' Relationships - Uses/Aggregation
+GreekGodsController ..> ResponseEntity : uses
+GreekGodsService ..> GreekGod : processes
 GreekGodsRepository ..> GreekGod : manages
-BackgroundSyncService ||--o{ GreekGodsSyncTransactionalService : delegates to
-GreekGodsSyncTransactionalService ||--o{ GreekGodsRepository : uses
-GreekGodsSyncTransactionalService ..> GreekGod : creates
-GreekGodsSyncTransactionalService +-- SyncResult : contains
+BackgroundSyncService ..> GreekGod : creates
+GreekGodsSyncTransactionalService ..> GreekGod : persists
+GlobalExceptionHandler ..> ProblemDetail : creates
 
-' Exception handling relationship
-GlobalExceptionHandler ..> GreekGodsController : handles exceptions from
+' Relationships - Configuration
+RestClientConfig ..> RestClient : creates
+MainApplication ..> GreekGodsController : starts context
 
-' Annotation stereotypes
-note right of GreekGodsController : @RestController\n@RequestMapping("/api/v1/gods")
-note right of GreekGodsService : @Service
-note right of BackgroundSyncService : @Service\n@Scheduled methods
-note right of GreekGodsSyncTransactionalService : @Service\n@Transactional
-note right of GreekGodsRepository : @Repository\nextends CrudRepository
-note right of GreekGod : @Table("greek_god")\n@Id, @Column annotations
-note right of GlobalExceptionHandler : @ControllerAdvice\n@ExceptionHandler
-note right of SchedulingConfig : @Configuration\n@EnableScheduling
+' Notes for important design patterns
+note right of GreekGodsService : Service Layer Pattern\nHandles business logic
+note right of BackgroundSyncService : Scheduled Background Task\nExternal API integration
+note right of GreekGodsSyncTransactionalService : Transactional Service\nEnsures data consistency
+note right of GlobalExceptionHandler : Cross-cutting Concern\nCentralized error handling
+note right of GreekGodsRepository : Repository Pattern\nData access abstraction
+note left of GreekGod : Record Entity\nImmutable data class
+note top of RestClientConfig : Configuration Pattern\nBean factory methods
 
 @enduml
