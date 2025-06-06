@@ -27,3 +27,40 @@ jobs:
           cache: 'maven'
       - name: Maven build ${{ matrix.problem.dir }}
         run: cd ${{ matrix.problem.path }} && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
+
+  startup-test:
+    name: Startup Test Problem ${{ matrix.problem.dir }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # Continue other jobs even if one fails
+      max-parallel: 5   # Run all problems simultaneously
+      matrix:
+        problem:
+          - { dir: "problem1", path: "problem1/" }
+          - { dir: "problem2", path: "problem2/" }
+          - { dir: "problem3", path: "problem3/" }
+          - { dir: "problem4", path: "problem4/" }
+          - { dir: "problem5", path: "problem5/implementation" }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true  # Fetches all submodules
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'graalvm' # See 'Supported distributions' for available options
+          java-version: '24'
+          cache: 'maven'
+      - name: Spring Boot startup test ${{ matrix.problem.dir }}
+        run: |
+          cd ${{ matrix.problem.path }}
+          echo "Starting Spring Boot application for ${{ matrix.problem.dir }}..."
+          timeout 60s ./mvnw spring-boot:run --batch-mode --no-transfer-progress || {
+            exit_code=$?
+            if [ $exit_code -eq 124 ]; then
+              echo "Application ran successfully for 60 seconds and was terminated"
+              exit 0
+            else
+              echo "Application failed to start or encountered an error (exit code: $exit_code)"
+              exit $exit_code
+            fi
+          }
