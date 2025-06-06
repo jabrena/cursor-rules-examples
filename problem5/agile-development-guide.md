@@ -107,7 +107,7 @@ Create the ADR about the non functional requirements using the information provi
   - **4.1 [ ] Create a tasks a list with a potential task list based on the Agile analysis & Technical design
 
 ```bash
-create task list with @2100-create-task-list.md using documents @agile @design 
+create task list with @2100-create-task-list.md using documents @agile @design
 ```
 
 **Note:** Review the high level design if you are agree and later continue with the process for the sublist typing "Go"
@@ -157,4 +157,4 @@ Create the UML diagram based on @src/main/java using the cursor rule @2009-uml-c
 - Skipping the attachment of previous artifacts when required
 - Not reviewing generated features for potential consolidation
 - Creating overly complex C4 diagrams (simplify when needed)
-- Forgetting to choose between CLI or REST API ADR templates 
+- Forgetting to choose between CLI or REST API ADR templates
