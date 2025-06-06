@@ -117,13 +117,6 @@
   </dependencies>
 
   <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.extensions</groupId>
-        <artifactId>maven-build-cache-extension</artifactId>
-        <version>${maven-extensions-build-cache.version}</version>
-      </extension>
-    </extensions>
 
     <plugins>
       <plugin>
@@ -180,6 +173,12 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Spring Boot Maven Plugin -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
 
       <plugin>
