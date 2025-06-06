@@ -2,9 +2,8 @@ package info.jab.latency.repository;
 
 import info.jab.latency.entity.GreekGod;
 import org.springframework.data.jdbc.repository.query.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 /**
@@ -12,7 +11,7 @@ import java.util.List;
  * Provides database access operations for the greek_god table.
  */
 @Repository
-public interface GreekGodsRepository extends CrudRepository<GreekGod, Long> {
+public interface GreekGodsRepository extends ListCrudRepository<GreekGod, Long> {
 
     /**
      * Retrieves all Greek god names from the database.
