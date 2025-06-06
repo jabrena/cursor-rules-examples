@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -62,7 +62,7 @@ class BackgroundSyncServiceIT {
     @Autowired
     private BackgroundSyncService backgroundSyncService;
 
-    @MockBean
+    @MockitoBean
     private GreekGodsRepository greekGodsRepository; // Mock database operations
 
     @BeforeEach
