@@ -1,4 +1,4 @@
-# Cursor Rules Examples
+# Cursor rules examples
 
 ## Motivation
 
@@ -16,29 +16,29 @@ Intall the cursor rules which you are going to use in your workspace
 
 ```bash
 sdk install jbang
-jbang cache clear
-jbang catalog list jabrena
+jbang --fresh setup@jabrena
 jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-agile
-jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-java
 ```
 
 ### 3. Requirements discovery
 
 Generate the software requirements based on the initial problem description
 
+![](./docs/sdlc_linear2.png)
+
 ```bash
 Create an agile development checklist using @2000-agile-checklist
 ```
 
-**Note:** Generate dynamically images in png format from your plantuml files
+**Note:** The Cursor rules for Agile could help several roles: `EA`, `PO`, `BA`, `SA`, `TL`, `SSE` & `SE`.
 
-```bash
-jbang puml-to-png@jabrena --watch problem5/docs/requirements
-```
+**Note:** Using the Cursor rules for agile, the implementation phase and the models provided by Cursor will have better context information to be used in the implementation & testing phase.
 
 ### 4.Implement the solution
 
 - 4.1 Setup the Maven project
+
+Depending of the requirements and the requirements will use one command or another
 
 ```bash
 jbang setup@jabrena init --maven
@@ -46,39 +46,16 @@ jbang setup@jabrena init --spring-boot
 jbang setup@jabrena init --quarkus
 ```
 
-**Note:** Remove the `pluginManagement` section in the the pom.xml because the default one is so much verbose.
-
-```bash
-Update the cursor rule using @101-java-maven-deps-and-plugins
-Verify the changes with ./mvnw clean verify
-```
-
-- 4.2 Implement the Acceptance test ([Outside-in TDD London](https://outsidein.dev/concepts/outside-in-tdd/)) based on the Gherkin file
+- 4.2 Implement the Acceptance test ([Outside-in TDD London](https://outsidein.dev/concepts/outside-in-tdd/)) based on the Gherkin file described in the implementation.
 
 ![](./docs/double-loop-tdd.png)
 
 **Note:** Attach the User story & Gherkin file from requirements folder
 
 ```bash
-Implement an acceptance tests in the package info.jab.latency for the scenario:
-"Successfully retrieve all mythology gods data".
+Implement an acceptance tests in the package info.jab.latency for the scenarios
 Don´t develop any source code, only implement the acceptance test.
 It will fail because in this phase, doesn´t exist any implemention.
-```
-
-**Note:** if the REST/Cli development need to interact with a External third party service, it could be possible that the acceptance tests Stub the external integration also.
-
-```xml
-<properties>
-    <wiremock.version>3.13.0</wiremock.version>
-</properties>
-
-<dependency>
-    <groupId>org.wiremock</groupId>
-    <artifactId>wiremock-standalone</artifactId>
-    <version>${wiremock.version}</version>
-    <scope>test</scope>
-</dependency>
 ```
 
 - 4.3 Implement the solution to pass the acceptance tests
@@ -90,25 +67,47 @@ Dont´t change the acceptance tests.
 Verify the changes with the command: ./mvnw clean verify
 ```
 
+**Note:** At the end of this phase, the development should build with `./mvnw clean verify` and at runtime the solution will work.
+
+### 5.Refactoring
+
+- 5.1 Increase the Code coverage
+
+Review current state with:
+
 ```bash
-./mvnw clean verify surefire-report:report
-jwebserver -p 8001 -d "$(pwd)/target/reports"
 ./mvnw clean verify jacoco:report -Pjacoco
 jwebserver -p 8002 -d "$(pwd)/target/site/jacoco"
-./mvnw clean verify -Dmaven.build.cache.enabled=false
 ```
 
-- 4.4 Implement the tests
+And improve the test coverage:
 
 ```bash
 Review the coverage with ./mvnw clean verify jacoco:report -Pjacoco and increase the coverage in instructions, classes & branches until 80% @problem4
 ```
 
-- 4.5 Refactor the initial stable solution
+- 5.2 Refactor the initial stable solution
+
+Review current implementation to have a high level view what is the current implementation:
 
 ```bash
-No recipe, this is the added value of a good SSE. ¯\_(ツ)_/¯
+Create the UML diagram based on @example/implementation/src/main/java using the cursor rule @2200-uml-class-diagram.mdc
 ```
+
+**Note:** Review all files if something is possible to be simplified.
+
+- 5.3 Enrich the solution
+
+Install the specific cursor rules for Java
+
+```bash
+jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-java
+#TODO: Create a checklist for the java cursor rules
+```
+
+**Note:** No recipe, this is the added value of a good SSE. ¯\_(ツ)_/¯```
+
+Enjoy in the refactoring process
 
 ## References
 
