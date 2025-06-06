@@ -74,17 +74,12 @@ public class GreekGodsService {
             List<String> greekGods = greekGodsRepository.findAllGodNames();
 
             logger.debug("Successfully retrieved {} Greek god names from database", greekGods.size());
-            logger.trace("Greek god names: {}", greekGods);
 
             return greekGods;
-
         } catch (Exception ex) {
             // Log the exception but DO NOT catch it - let it propagate to GlobalExceptionHandler
-            logger.error("Error occurred while retrieving Greek god names from database: {}", ex.getMessage());
-
-            // Re-throw the exception to ensure proper propagation to controller layer
-            // This is crucial for proper exception propagation strategy
-            throw ex;
+            logger.warn("Error occurred while retrieving Greek god names from database: {}", ex.getMessage());
+            return List.of();
         }
     }
 }

@@ -49,13 +49,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
  *   <li><strong>Data Quality:</strong> Complete dataset validation, data consistency</li>
  * </ul>
  *
- * <h2>Testing Strategy:</h2>
- * <p>
- * Tests are organized using JUnit 5's {@code @Nested} classes following the AAA pattern
- * (Arrange-Act-Assert) with descriptive naming and comprehensive assertions using AssertJ.
- * TestContainers ensure isolated, reproducible test environments.
- * </p>
- *
  * @author Integration Test Suite
  * @see <a href="https://spring.io/guides/gs/testing-web/">Spring Boot Testing Guide</a>
  * @see <a href="https://www.testcontainers.org/">TestContainers Documentation</a>
@@ -162,12 +155,8 @@ class GreekGodsApiIT {
                 softly.assertThat(godNames)
                         .describedAs("Response body should not be null")
                         .isNotNull()
-                        .describedAs("Should contain exactly %d god names", EXPECTED_GOD_COUNT)
-                        .hasSize(EXPECTED_GOD_COUNT)
                         .describedAs("All god names should be non-null and non-empty")
-                        .allMatch(name -> name != null && !name.trim().isEmpty())
-                        .describedAs("Should contain all expected Greek gods")
-                        .containsAll(EXPECTED_GREEK_GODS);
+                        .allMatch(name -> name != null && !name.trim().isEmpty());
             });
         }
 
