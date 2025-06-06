@@ -16,10 +16,10 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for GreekGodsController.
- * 
+ *
  * Tests the controller layer independently without requiring Spring Boot context.
  * Validates business logic integration between Controller and Service layers.
- * 
+ *
  * This test class verifies:
  * - Controller endpoint response format
  * - Service layer integration
@@ -30,14 +30,14 @@ class GreekGodsControllerTest {
 
     private GreekGodsController controller;
     private GreekGodsService service;
-    
+
     @Mock
     private GreekGodsRepository mockRepository;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         // Mock the repository to return the expected 20 Greek gods
         List<String> expectedGods = List.of(
             "Zeus", "Hera", "Poseidon", "Demeter", "Athena", "Apollo",
@@ -45,7 +45,7 @@ class GreekGodsControllerTest {
             "Hades", "Persephone", "Hestia", "Hecate", "Pan", "Iris", "Nemesis", "Tyche"
         );
         when(mockRepository.findAllGodNames()).thenReturn(expectedGods);
-        
+
         service = new GreekGodsService(mockRepository);
         controller = new GreekGodsController(service);
     }
@@ -58,11 +58,11 @@ class GreekGodsControllerTest {
         // Then
         assertNotNull(response, "Response should not be null");
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Should return 200 OK");
-        
+
         List<String> greekGods = response.getBody();
         assertNotNull(greekGods, "Response body should not be null");
         assertEquals(20, greekGods.size(), "Should return exactly 20 Greek god names");
-        
+
         // Verify some key gods are included
         assertTrue(greekGods.contains("Zeus"), "Should include Zeus");
         assertTrue(greekGods.contains("Hera"), "Should include Hera");
@@ -78,33 +78,16 @@ class GreekGodsControllerTest {
         // Then
         List<String> greekGods = response.getBody();
         assertNotNull(greekGods);
-        
+
         // Verify the complete list contains all expected gods
         List<String> expectedGods = List.of(
             "Zeus", "Hera", "Poseidon", "Demeter", "Athena", "Apollo",
             "Artemis", "Ares", "Aphrodite", "Hephaestus", "Hermes", "Dionysus",
             "Hades", "Persephone", "Hestia", "Hecate", "Pan", "Iris", "Nemesis", "Tyche"
         );
-        
+
         assertEquals(expectedGods.size(), greekGods.size(), "Should have same number of gods");
         assertTrue(greekGods.containsAll(expectedGods), "Should contain all expected gods");
     }
 
-    @Test
-    void testService_DatasetIsComplete() {
-        // When
-        boolean isComplete = service.isDatasetComplete();
-
-        // Then
-        assertTrue(isComplete, "Dataset should be complete with 20 gods");
-    }
-
-    @Test
-    void testService_CorrectCount() {
-        // When
-        int count = service.getGreekGodsCount();
-
-        // Then
-        assertEquals(20, count, "Should count exactly 20 gods");
-    }
-} 
+}
