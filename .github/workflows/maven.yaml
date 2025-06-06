@@ -3,9 +3,19 @@ name: CI Builds
 on: [push]
 
 jobs:
-  run:
-    name: Build
+  build:
+    name: Build Problem ${{ matrix.problem.dir }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false  # Continue other jobs even if one fails
+      max-parallel: 5   # Run all problems simultaneously
+      matrix:
+        problem:
+          - { dir: "problem1", path: "problem1/" }
+          - { dir: "problem2", path: "problem2/" }
+          - { dir: "problem3", path: "problem3/" }
+          - { dir: "problem4", path: "problem4/" }
+          - { dir: "problem5", path: "problem5/implementation" }
     steps:
       - uses: actions/checkout@v4
         with:
@@ -15,13 +25,5 @@ jobs:
           distribution: 'graalvm' # See 'Supported distributions' for available options
           java-version: '24'
           cache: 'maven'
-      - name: Maven build problem 1
-        run: cd problem1/ && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
-      - name: Maven build problem 2
-        run: cd problem2/ && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
-      - name: Maven build problem 3
-        run: cd problem3/ && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
-      - name: Maven build problem 4
-        run: cd problem4/ && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
-      - name: Maven build problem 5
-        run: cd problem5/implementation && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
+      - name: Maven build ${{ matrix.problem.dir }}
+        run: cd ${{ matrix.problem.path }} && ./mvnw --batch-mode --no-transfer-progress verify --file ./pom.xml
