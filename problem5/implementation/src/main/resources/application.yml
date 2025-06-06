@@ -134,3 +134,7 @@ background-sync:
     enabled: true
     fixed-rate: 300000  # 5 minutes = 5 * 60 * 1000 = 300000 milliseconds
     initial-delay: 30000  # 30 seconds initial delay = 30 * 1000 = 30000 milliseconds
+
+# Note: When running with Docker Compose (compose.yaml present),
+# Spring Boot will automatically configure datasource properties
+# to connect to the PostgreSQL service defined in compose.yaml
