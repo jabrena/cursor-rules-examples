@@ -28,21 +28,18 @@ public class BackgroundSyncService {
     private static final Logger logger = LoggerFactory.getLogger(BackgroundSyncService.class);
     private final RestClient restClient;
     private final String apiEndpoint;
-    private final boolean syncEnabled;
     private final GreekGodsSyncTransactionalService transactionalSyncService;
 
     public BackgroundSyncService(
             @Qualifier("greekGodsRestClient") RestClient restClient,
             @Value("${external-api.greek-gods.endpoint}") String endpoint,
-            @Value("${background-sync.greek-gods.enabled:true}") boolean syncEnabled,
             GreekGodsSyncTransactionalService transactionalSyncService) {
 
         this.restClient = restClient;
         this.apiEndpoint = endpoint;
-        this.syncEnabled = syncEnabled;
         this.transactionalSyncService = transactionalSyncService;
 
-        logger.info("BackgroundSyncService configured: endpoint={}, syncEnabled={}", endpoint, syncEnabled);
+        logger.info("BackgroundSyncService configured: endpoint={}", endpoint);
     }
 
     /**
@@ -53,12 +50,6 @@ public class BackgroundSyncService {
     @Scheduled(fixedRateString = "${background-sync.greek-gods.fixed-rate:1800000}",
                initialDelayString = "${background-sync.greek-gods.initial-delay:60000}")
     public void synchronizeData() {
-        //TODO review alternatives
-        if (!syncEnabled) {
-            logger.debug("Background synchronization skipped - disabled via configuration");
-            return;
-        }
-
         logger.info("Starting background synchronization");
 
         try {

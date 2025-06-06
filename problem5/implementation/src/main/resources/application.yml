@@ -15,8 +15,6 @@ spring:
     livereload:
       enabled: true  # Enable LiveReload server for browser refresh
       port: 35729    # Default LiveReload port
-    remote:
-      secret: mysecret  # Secret for remote debugging (development only)
 
   # Lifecycle configuration for graceful shutdown
   lifecycle:
@@ -32,13 +30,6 @@ spring:
     username: greek_gods_user
     password: greek_gods_password
     driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
-      idle-timeout: 300000
-      max-lifetime: 600000
-      connection-timeout: 20000
-      leak-detection-threshold: 60000
 
   # Flyway Configuration
   flyway:
@@ -64,7 +55,6 @@ external-api:
 # Background Sync Scheduling Configuration
 background-sync:
   greek-gods:
-    enabled: true
     fixed-rate: 1800000  # 30 minutes = 30 * 60 * 1000 = 1800000 milliseconds
     initial-delay: 60000  # 1 minute = 60 * 1000 = 60000 milliseconds
     # Alternative cron expression (commented out - using fixed-rate by default)
@@ -84,9 +74,6 @@ springdoc:
     contact:
       name: Greek Gods API Team
       email: support@greekgodsapi.com
-    license:
-      name: MIT
-      url: https://opensource.org/licenses/MIT
 
 management:
   endpoints:
@@ -103,5 +90,3 @@ logging:
     org.springframework.jdbc: WARN
     org.springframework.jdbc.core.JdbcTemplate: WARN
     org.flywaydb: INFO
-
-
