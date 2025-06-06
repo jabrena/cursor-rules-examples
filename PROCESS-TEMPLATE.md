@@ -8,8 +8,7 @@ This document could be used as a procedure to solve any latency problem
 
 ```bash
 sdk install jbang
-jbang cache clear
-jbang catalog list jabrena
+jbang --fresh setup@jabrena
 jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-agile
 jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-java
 ```
