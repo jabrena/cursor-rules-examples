@@ -102,7 +102,7 @@ Review current implementation to have a high level view what is the current impl
 Create the UML diagram based on @example/implementation/src/main/java using the cursor rule @2200-uml-class-diagram.mdc
 ```
 
-Generate the png files on fly with the following utility:
+Generate the png files on-fly with the following utility:
 
 ```bash
 jbang --fresh puml-to-png@jabrena
