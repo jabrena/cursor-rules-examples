@@ -1,0 +1,131 @@
+@startuml GreekGodsAPI_ClassDiagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam packageStyle rectangle
+
+' Package declarations
+package "info.jab.latency" {
+    class MainApplication {
+        + main(args: String[]) : void
+    }
+}
+
+package "info.jab.latency.config" {
+    class RestClientConfig {
+        + greekGodsRestClient(baseUrl: String, timeoutMs: int) : RestClient
+    }
+
+    class SchedulingConfig {
+    }
+}
+
+package "info.jab.latency.controller" {
+    class GreekGodsController {
+        - greekGodsService : GreekGodsService
+        --
+        + GreekGodsController(greekGodsService: GreekGodsService)
+        + getGreekGods() : ResponseEntity<List<String>>
+    }
+
+    class GlobalExceptionHandler {
+        - logger : Logger
+        --
+        + handleRuntimeException(ex: RuntimeException, request: WebRequest) : ResponseEntity<ProblemDetail>
+        + handleGenericException(ex: Exception, request: WebRequest) : ResponseEntity<ProblemDetail>
+    }
+}
+
+package "info.jab.latency.entity" {
+    class GreekGod <<record>> {
+        + id : Long
+        + name : String
+        --
+        + GreekGod(name: String)
+        + GreekGod(id: Long, name: String)
+    }
+}
+
+package "info.jab.latency.repository" {
+    interface GreekGodsRepository {
+        + findAllGodNames() : List<String>
+        + existsByName(name: String) : boolean
+    }
+}
+
+package "info.jab.latency.service" {
+    class GreekGodsService {
+        - logger : Logger
+        - greekGodsRepository : GreekGodsRepository
+        --
+        + GreekGodsService(greekGodsRepository: GreekGodsRepository)
+        + getAllGreekGodNames() : List<String>
+    }
+
+    class BackgroundSyncService {
+        - logger : Logger
+        - restClient : RestClient
+        - apiEndpoint : String
+        - transactionalSyncService : GreekGodsSyncTransactionalService
+        --
+        + BackgroundSyncService(restClient: RestClient, endpoint: String, transactionalSyncService: GreekGodsSyncTransactionalService)
+        + synchronizeData() : void
+        - fetchDataFromExternalAPI() : List<String>
+    }
+
+    class GreekGodsSyncTransactionalService {
+        - logger : Logger
+        - greekGodsRepository : GreekGodsRepository
+        --
+        + GreekGodsSyncTransactionalService(greekGodsRepository: GreekGodsRepository)
+        + performTransactionalSync(externalData: List<String>) : void
+    }
+}
+
+' External Dependencies (Spring Framework)
+package "External Dependencies" {
+    interface ListCrudRepository <<Spring Data>> {
+    }
+
+    class RestClient <<Spring Web>> {
+    }
+
+    class ResponseEntity <<Spring Web>> {
+    }
+
+    class ProblemDetail <<Spring Web>> {
+    }
+}
+
+' Relationships - Dependency Injection
+GreekGodsController --> GreekGodsService : dependency injection
+GreekGodsService --> GreekGodsRepository : dependency injection
+BackgroundSyncService --> RestClient : dependency injection
+BackgroundSyncService --> GreekGodsSyncTransactionalService : dependency injection
+GreekGodsSyncTransactionalService --> GreekGodsRepository : dependency injection
+
+' Relationships - Extends/Implements
+GreekGodsRepository --|> ListCrudRepository : extends
+
+' Relationships - Uses/Aggregation
+GreekGodsController ..> ResponseEntity : uses
+GreekGodsService ..> GreekGod : processes
+GreekGodsRepository ..> GreekGod : manages
+BackgroundSyncService ..> GreekGod : creates
+GreekGodsSyncTransactionalService ..> GreekGod : persists
+GlobalExceptionHandler ..> ProblemDetail : creates
+
+' Relationships - Configuration
+RestClientConfig ..> RestClient : creates
+MainApplication ..> GreekGodsController : starts context
+
+' Notes for important design patterns
+note right of GreekGodsService : Service Layer Pattern\nHandles business logic
+note right of BackgroundSyncService : Scheduled Background Task\nExternal API integration
+note right of GreekGodsSyncTransactionalService : Transactional Service\nEnsures data consistency
+note right of GlobalExceptionHandler : Cross-cutting Concern\nCentralized error handling
+note right of GreekGodsRepository : Repository Pattern\nData access abstraction
+note left of GreekGod : Record Entity\nImmutable data class
+note top of RestClientConfig : Configuration Pattern\nBean factory methods
+
+@enduml

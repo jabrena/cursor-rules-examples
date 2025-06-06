@@ -1,0 +1,92 @@
+server:
+  port: 8080
+  shutdown: graceful  # Enable graceful shutdown
+
+spring:
+  application:
+    name: greek-gods-api
+
+  # DevTools Configuration
+  devtools:
+    restart:
+      enabled: true  # Enable automatic restart on classpath changes
+      additional-paths: src/main/java  # Monitor specific paths for changes
+      exclude: META-INF/maven/**,META-INF/resources/**,resources/**,static/**,public/**,templates/**,**/*Test.class,**/*Tests.class
+    livereload:
+      enabled: true  # Enable LiveReload server for browser refresh
+      port: 35729    # Default LiveReload port
+
+  # Lifecycle configuration for graceful shutdown
+  lifecycle:
+    timeout-per-shutdown-phase: 30s  # Maximum time to wait for shutdown
+
+  # Scheduling Configuration
+  scheduling:
+    enabled: true  # Enable/disable all scheduled tasks (default: true)
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/greek_gods_db
+    username: greek_gods_user
+    password: greek_gods_password
+    driver-class-name: org.postgresql.Driver
+
+  # Flyway Configuration
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    clean-disabled: true
+
+  # Spring Data JDBC Configuration
+  data:
+    jdbc:
+      repositories:
+        enabled: true
+
+# External API Configuration for Background Sync
+external-api:
+  greek-gods:
+    base-url: https://my-json-server.typicode.com
+    endpoint: /jabrena/latency-problems/greek
+    timeout: 30000  # 30 seconds
+
+# Background Sync Scheduling Configuration
+background-sync:
+  greek-gods:
+    fixed-rate: 1800000  # 30 minutes = 30 * 60 * 1000 = 1800000 milliseconds
+    initial-delay: 60000  # 1 minute = 60 * 1000 = 60000 milliseconds
+    # Alternative cron expression (commented out - using fixed-rate by default)
+    # cron: "0 */30 * * * *"  # Every 30 minutes
+
+# SpringDoc OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  info:
+    title: Greek Gods API
+    description: REST API for retrieving Greek Gods data
+    version: 1.0.0
+    contact:
+      name: Greek Gods API Team
+      email: support@greekgodsapi.com
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    info.jab.latency: INFO
+    org.springframework.jdbc: WARN
+    org.springframework.jdbc.core.JdbcTemplate: WARN
+    org.flywaydb: INFO
