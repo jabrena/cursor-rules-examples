@@ -36,7 +36,7 @@ jobs:
       max-parallel: 5   # Run all problems simultaneously
       matrix:
         problem:
-          - { dir: "problem1", path: "problem1/", spring_boot: false }
+          - { dir: "problem1", path: "problem1/implementation", spring_boot: false }
           - { dir: "problem2", path: "problem2/", spring_boot: false }
           - { dir: "problem3", path: "problem3/", spring_boot: true }
           - { dir: "problem4", path: "problem4/", spring_boot: true }
