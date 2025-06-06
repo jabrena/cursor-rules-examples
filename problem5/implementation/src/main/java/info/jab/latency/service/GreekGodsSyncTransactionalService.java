@@ -132,13 +132,13 @@ public class GreekGodsSyncTransactionalService {
         // Check for duplicates
         for (GreekGod god : greekGods) {
             try {
-                if (greekGodsRepository.existsByName(god.getName())) {
+                if (greekGodsRepository.existsByName(god.name())) {
                     result.duplicatesSkipped++;
                 } else {
                     newGods.add(god);
                 }
             } catch (Exception e) {
-                logger.error("[SYNC-{}] Error checking existence for god '{}': {}", syncId, god.getName(), e.getMessage());
+                logger.error("[SYNC-{}] Error checking existence for god '{}': {}", syncId, god.name(), e.getMessage());
                 result.errors++;
             }
         }
@@ -152,7 +152,7 @@ public class GreekGodsSyncTransactionalService {
                     greekGodsRepository.save(god);
                     result.inserted++;
                 } catch (Exception e) {
-                    logger.error("[SYNC-{}] Failed to save god '{}': {}", syncId, god.getName(), e.getMessage());
+                    logger.error("[SYNC-{}] Failed to save god '{}': {}", syncId, god.name(), e.getMessage());
                     result.errors++;
                 }
             }
