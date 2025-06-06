@@ -106,7 +106,7 @@ class BackgroundSyncServiceIT {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("[{\"name\":\"Zeus\"},{\"name\":\"Hera\"},{\"name\":\"Poseidon\"}]")));
+                        .withBody("[\"Zeus\",\"Hera\",\"Poseidon\"]")));
 
         // Mock repository responses
         when(greekGodsRepository.existsByName("Zeus")).thenReturn(false);
@@ -148,7 +148,7 @@ class BackgroundSyncServiceIT {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("[{\"name\":\"Zeus\"},{\"name\":\"Hera\"}]")));
+                        .withBody("[\"Zeus\",\"Hera\"]")));
 
         // Mock existing data in repository
         when(greekGodsRepository.existsByName(anyString())).thenReturn(true);
@@ -188,7 +188,7 @@ class BackgroundSyncServiceIT {
         StringBuilder largeResponse = new StringBuilder("[");
         for (int i = 1; i <= 100; i++) {
             if (i > 1) largeResponse.append(",");
-            largeResponse.append("{\"name\":\"God").append(i).append("\"}");
+            largeResponse.append("\"God").append(i).append("\"");
         }
         largeResponse.append("]");
 
@@ -235,7 +235,7 @@ class BackgroundSyncServiceIT {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("[{\"name\":\"Zeus\"},{\"name\":\"Hera\"},{\"name\":\"Poseidon\"},{\"name\":\"Athena\"}]")));
+                        .withBody("[\"Zeus\",\"Hera\",\"Poseidon\",\"Athena\"]")));
 
         // Mock mixed existing/new data
         when(greekGodsRepository.existsByName("Zeus")).thenReturn(true);
@@ -259,7 +259,7 @@ class BackgroundSyncServiceIT {
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("[{\"name\":\"Zeus\"},{\"invalidField\":\"value\"},{\"name\":\"\"},{\"name\":\"Hera\"}]")));
+                        .withBody("[\"Zeus\",\"InvalidGod\",\"\",\"Hera\"]")));
 
         // Mock repository responses
         when(greekGodsRepository.existsByName(anyString())).thenReturn(false);
@@ -267,8 +267,8 @@ class BackgroundSyncServiceIT {
         // Act
         backgroundSyncService.synchronizeData();
 
-        // Assert - Should only process valid records (Zeus and Hera)
-        verify(greekGodsRepository, times(2)).existsByName(anyString());
-        verify(greekGodsRepository, times(2)).save(any(GreekGod.class));
+        // Assert - Should only process valid records (Zeus, InvalidGod, and Hera - empty string filtered out)
+        verify(greekGodsRepository, times(3)).existsByName(anyString());
+        verify(greekGodsRepository, times(3)).save(any(GreekGod.class));
     }
 }

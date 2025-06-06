@@ -1,9 +1,26 @@
 server:
   port: 8080
+  shutdown: graceful  # Enable graceful shutdown
 
 spring:
   application:
     name: greek-gods-api
+
+  # DevTools Configuration
+  devtools:
+    restart:
+      enabled: true  # Enable automatic restart on classpath changes
+      additional-paths: src/main/java  # Monitor specific paths for changes
+      exclude: META-INF/maven/**,META-INF/resources/**,resources/**,static/**,public/**,templates/**,**/*Test.class,**/*Tests.class
+    livereload:
+      enabled: true  # Enable LiveReload server for browser refresh
+      port: 35729    # Default LiveReload port
+    remote:
+      secret: mysecret  # Secret for remote debugging (development only)
+
+  # Lifecycle configuration for graceful shutdown
+  lifecycle:
+    timeout-per-shutdown-phase: 30s  # Maximum time to wait for shutdown
 
   # Scheduling Configuration
   scheduling:
@@ -49,7 +66,7 @@ background-sync:
   greek-gods:
     enabled: true
     fixed-rate: 1800000  # 30 minutes = 30 * 60 * 1000 = 1800000 milliseconds
-    initial-delay: 60000  # 1 minute initial delay = 60 * 1000 = 60000 milliseconds
+    initial-delay: 60000  # 1 minute = 60 * 1000 = 60000 milliseconds
     # Alternative cron expression (commented out - using fixed-rate by default)
     # cron: "0 */30 * * * *"  # Every 30 minutes
 
@@ -83,58 +100,8 @@ management:
 logging:
   level:
     info.jab.latency: INFO
-    org.springframework.jdbc: DEBUG
+    org.springframework.jdbc: WARN
+    org.springframework.jdbc.core.JdbcTemplate: WARN
     org.flywaydb: INFO
 
----
-# Production Profile
-spring:
-  config:
-    activate:
-      on-profile: production
-  datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/greek_gods_db}
-    username: ${DATABASE_USER:greek_gods_user}
-    password: ${DATABASE_PASSWORD:greek_gods_password}
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
 
-  # Production scheduling configuration
-  scheduling:
-    enabled: true  # Enable scheduling in production
-
-# Production scheduling - less frequent sync
-background-sync:
-  greek-gods:
-    enabled: true
-    fixed-rate: 3600000  # 60 minutes = 60 * 60 * 1000 = 3600000 milliseconds
-    initial-delay: 300000  # 5 minutes initial delay = 5 * 60 * 1000 = 300000 milliseconds
-
----
-# Development Profile
-spring:
-  config:
-    activate:
-      on-profile: development
-  datasource:
-    url: jdbc:postgresql://localhost:5432/greek_gods_dev_db
-    username: greek_gods_dev_user
-    password: greek_gods_dev_password
-  flyway:
-    clean-disabled: false
-
-  # Development scheduling configuration - can be disabled for testing
-  scheduling:
-    enabled: true  # Set to false to disable all scheduled tasks in development
-
-# Development scheduling - more frequent sync for testing
-background-sync:
-  greek-gods:
-    enabled: true
-    fixed-rate: 300000  # 5 minutes = 5 * 60 * 1000 = 300000 milliseconds
-    initial-delay: 30000  # 30 seconds initial delay = 30 * 1000 = 30000 milliseconds
-
-# Note: When running with Docker Compose (compose.yaml present),
-# Spring Boot will automatically configure datasource properties
-# to connect to the PostgreSQL service defined in compose.yaml

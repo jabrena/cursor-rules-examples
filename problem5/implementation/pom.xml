@@ -13,20 +13,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Greek Gods API</name>
 	<description>REST API for retrieving Greek Gods data</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
-	<properties>
+
+    <properties>
 		<java.version>24</java.version>
 		<testcontainers.version>1.20.3</testcontainers.version>
 		<flyway.version>10.20.1</flyway.version>

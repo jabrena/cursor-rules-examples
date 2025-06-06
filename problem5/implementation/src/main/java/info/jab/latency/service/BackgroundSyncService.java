@@ -59,32 +59,23 @@ public class BackgroundSyncService {
             return;
         }
 
-        long startTime = System.currentTimeMillis();
-        String syncId = generateSyncId();
-
-        logger.info("[SYNC-{}] Starting background synchronization", syncId);
+        logger.info("Starting background synchronization");
 
         try {
             // Fetch data from external API (non-transactional operation)
-            List<Map<String, Object>> externalData = fetchDataFromExternalAPI();
-            logger.info("[SYNC-{}] Fetched {} records from external API", syncId, externalData.size());
+            List<String> externalData = fetchDataFromExternalAPI();
+
+            if (externalData.isEmpty()) {
+                logger.info("No data fetched from external API, skipping synchronization");
+                return;
+            }
 
             // Delegate transactional operations to dedicated service
-            GreekGodsSyncTransactionalService.SyncResult syncResult =
-                transactionalSyncService.performTransactionalSync(externalData, syncId);
+            transactionalSyncService.performTransactionalSync(externalData);
 
-            // Log successful completion
-            long duration = System.currentTimeMillis() - startTime;
-            logger.info("[SYNC-{}] Completed successfully in {}ms. New: {}, Duplicates: {}, Errors: {}",
-                       syncId, duration, syncResult.inserted, syncResult.duplicatesSkipped, syncResult.errors);
-
-        } catch (RestClientException e) {
-            long duration = System.currentTimeMillis() - startTime;
-            logger.error("[SYNC-{}] Failed due to API error after {}ms: {}", syncId, duration, e.getMessage());
-            // Note: No need to re-throw as this is the top-level scheduled method
+            logger.info("Background synchronization completed successfully");
         } catch (Exception e) {
-            long duration = System.currentTimeMillis() - startTime;
-            logger.error("[SYNC-{}] Failed due to unexpected error after {}ms: {}", syncId, duration, e.getMessage(), e);
+            logger.error("Failed due to unexpected error: {}", e.getMessage(), e);
             // Note: No need to re-throw as this is the top-level scheduled method
         }
     }
@@ -92,30 +83,27 @@ public class BackgroundSyncService {
     /**
      * Fetches Greek Gods data from external JSON server.
      */
-    private List<Map<String, Object>> fetchDataFromExternalAPI() {
+    private List<String> fetchDataFromExternalAPI() {
         logger.debug("Fetching data from external API: {}", apiEndpoint);
 
-        List<Map<String, Object>> result = restClient
-                .get()
-                .uri(apiEndpoint)
-                .retrieve()
-                .body(List.class);
+        try {
+            String[] result = restClient
+                    .get()
+                    .uri(apiEndpoint)
+                    .retrieve()
+                    .body(String[].class);
 
-        if (Objects.isNull(result)) {
-            logger.warn("External API returned null response");
-            return List.of();
+            if (Objects.isNull(result)) {
+                logger.warn("External API returned null response");
+                return List.of();
+            }
+
+            List<String> resultList = List.of(result);
+            logger.debug("Successfully fetched {} records from external API", resultList.size());
+            return resultList;
+        } catch (RestClientException e) {
+            logger.warn("Failed to fetch data from external API: {}", e.getMessage());
+            return List.of(); // Return empty list on API failure
         }
-
-        logger.debug("Successfully fetched {} records from external API", result.size());
-        return result;
-    }
-
-    /**
-     * Generates a unique sync ID for tracking.
-     */
-    private String generateSyncId() {
-        return String.format("%d-%04d",
-                           System.currentTimeMillis() / 1000,
-                           (int)(Math.random() * 10000));
     }
 }
