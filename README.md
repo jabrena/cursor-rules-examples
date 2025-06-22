@@ -129,12 +129,16 @@ Enjoy in the refactoring process
 - https://editor-next.swagger.io/
 - https://www.plantuml.com/plantuml/uml/
 - https://cekrem.github.io/posts/double-loop-tdd-blog-engine-pt2/
-- ...
+
+## Cursor rules ecosystem
+
+- https://github.com/jabrena/101-cursor
 - https://github.com/jabrena/cursor-rules-methodology
 - https://github.com/jabrena/cursor-rules-agile
 - https://github.com/jabrena/cursor-rules-java
+- https://github.com/jabrena/cursor-rules-spring-boot
 - https://github.com/jabrena/cursor-rules-examples
-- https://github.com/jabrena/latency-problems
-- https://github.com/jabrena/101-cursor
+- https://github.com/jabrena/cursor-rules-sandbox
+- https://github.com/jabrena/plantuml-to-png-cli
 - https://github.com/jabrena/setup-cli
 - https://github.com/jabrena/jbang-catalog
