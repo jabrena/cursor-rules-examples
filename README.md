@@ -15,9 +15,12 @@ Probe that using **Cursor rules for Agile & Java** are useful when the Software 
 Intall the cursor rules which you are going to use in your workspace
 
 ```bash
+#deprecated
 sdk install jbang
 jbang --fresh setup@jabrena
 jbang setup@jabrena init --cursor https://github.com/jabrena/cursor-rules-agile
+
+npx skills add jabrena/cursor-rules-java --all --agent cursor
 ```
 
 ### 3. Requirements discovery
