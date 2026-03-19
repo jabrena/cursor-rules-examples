@@ -71,39 +71,39 @@ flowchart LR
 
 | # | Phase | Task | TDD | Status |
 |---|-------|------|-----|--------|
-| 1 | Setup | Update pom.xml with Resilience4j, Jackson, Testcontainers dependencies | | |
-| 2 | Setup | Configure application.properties with resilience settings | | |
-| 3 | Setup | Move Application.java from com.example.demo to info.jab.ms package | | |
-| 4 | Setup | Verify build stability with `mvn clean compile` | | |
-| 6 | RED | Write BaseIntegrationTest with Testcontainers setup | Test | |
-| 7 | RED | Write acceptance test for happy path scenario only | Test | |
-| 8 | GREEN | Create GreekGod domain record | Impl | |
-| 9 | Verify | Run tests and verify build: `mvn clean test` | | |
-| 10 | GREEN | Create GreekGodsResponse wrapper | Impl | |
-| 11 | Verify | Run tests and verify build: `mvn clean test` | | |
-| 12 | GREEN | Implement RestClient configuration bean | Impl | |
-| 13 | Verify | Run tests and verify build: `mvn clean test` | | |
-| 14 | GREEN | Implement GreekGodsService with basic HTTP call | Impl | |
-| 15 | Verify | Run tests and verify build: `mvn clean test` | | |
-| 16 | GREEN | Add filtering logic for gods starting with 'a' | Impl | |
-| 17 | Verify | Run acceptance test and verify: `mvn clean test` | | |
-| 18 | RED | Write unit test for service logic | Test | |
-| 19 | GREEN | Apply Resilience4j rate limiter decorator | Impl | |
-| 20 | Verify | Run all tests and verify: `mvn clean test` | | |
-| 21 | GREEN | Apply Resilience4j retry decorator | Impl | |
-| 22 | Verify | Run all tests and verify: `mvn clean test` | | |
-| 23 | GREEN | Apply Resilience4j circuit breaker decorator | Impl | |
-| 24 | Verify | Run all tests and verify: `mvn clean test` | | |
-| 25 | GREEN | Implement graceful degradation (empty list on failures) | Impl | |
-| 26 | Verify | Run all tests and verify: `mvn clean test` | | |
-| 27 | RED | Write integration tests for retry behavior with Testcontainers | Test | |
-| 28 | RED | Write integration tests for circuit breaker scenarios with Testcontainers | Test | |
-| 29 | RED | Write integration tests for timeout and latency scenarios with Testcontainers | Test | |
-| 30 | RED | Write integration tests for HTTP error responses with Testcontainers | Test | |
-| 31 | Refactor | Add comprehensive logging for resilience events | | |
-| 32 | Verify | Run all tests and verify: `mvn clean test` | | |
-| 33 | Refactor | Optimize configuration and error handling | | |
-| 34 | Verify | Final verification with `mvn clean verify` | | |
+| 1 | Setup | Update pom.xml with Resilience4j, Jackson, Testcontainers dependencies | | ✔ |
+| 2 | Setup | Configure application.properties with resilience settings | | ✔ |
+| 3 | Setup | Move Application.java from com.example.demo to info.jab.ms package | | ✔ |
+| 4 | Setup | Verify build stability with `mvn clean compile` | | ✔ |
+| 6 | RED | Write BaseIntegrationTest with Testcontainers setup | Test | ✔ |
+| 7 | RED | Write acceptance test for happy path scenario only | Test | ✔ |
+| 8 | GREEN | Create GreekGod domain record | Impl | ✔ |
+| 9 | Verify | Run tests and verify build: `mvn clean test` | | ✔ |
+| 10 | GREEN | Create GreekGodsResponse wrapper | Impl | ✔ |
+| 11 | Verify | Run tests and verify build: `mvn clean test` | | ✔ |
+| 12 | GREEN | Implement RestClient configuration bean | Impl | ✔ |
+| 13 | Verify | Run tests and verify build: `mvn clean test` | | ✔ |
+| 14 | GREEN | Implement GreekGodsService with basic HTTP call | Impl | ✔ |
+| 15 | Verify | Run tests and verify build: `mvn clean test` | | ✔ |
+| 16 | GREEN | Add filtering logic for gods starting with 'a' | Impl | ✔ |
+| 17 | Verify | Run acceptance test and verify: `mvn clean test` | | ✔ |
+| 18 | RED | Write unit test for service logic | Test | ✔ |
+| 19 | GREEN | Apply Resilience4j rate limiter decorator | Impl | ✔ |
+| 20 | Verify | Run all tests and verify: `mvn clean test` | | ✔ |
+| 21 | GREEN | Apply Resilience4j retry decorator | Impl | ✔ |
+| 22 | Verify | Run all tests and verify: `mvn clean test` | | ✔ |
+| 23 | GREEN | Apply Resilience4j circuit breaker decorator | Impl | ✔ |
+| 24 | Verify | Run all tests and verify: `mvn clean test` | | ✔ |
+| 25 | GREEN | Implement graceful degradation (empty list on failures) | Impl | ✔ |
+| 26 | Verify | Run all tests and verify: `mvn clean test` | | ✔ |
+| 27 | RED | Write integration tests for retry behavior with Testcontainers | Test | ✔ |
+| 28 | RED | Write integration tests for circuit breaker scenarios with Testcontainers | Test | ✔ |
+| 29 | RED | Write integration tests for timeout and latency scenarios with Testcontainers | Test | ✔ |
+| 30 | RED | Write integration tests for HTTP error responses with Testcontainers | Test | ✔ |
+| 31 | Refactor | Add comprehensive logging for resilience events | | ✔ |
+| 32 | Verify | Run all tests and verify: `mvn clean test` | | ✔ |
+| 33 | Refactor | Optimize configuration and error handling | | ✔ |
+| 34 | Verify | Final verification with `mvn clean verify` | | ✔ |
 
 ## Execution Instructions
 
@@ -141,7 +141,7 @@ When executing this plan:
 | 12 | `src/test/java/info/jab/ms/integration/GreekGodsRetryIntegrationTest.java` | RED — retry scenarios extending BaseIntegrationTest |
 | 13 | `src/test/java/info/jab/ms/integration/GreekGodsCircuitBreakerIntegrationTest.java` | RED — circuit breaker scenarios extending BaseIntegrationTest |
 | 14 | `src/test/java/info/jab/ms/integration/GreekGodsTimeoutIntegrationTest.java` | RED — timeout and latency scenarios extending BaseIntegrationTest |
-| 15 | `src/test/java/info/jab/ms/integration/GreekGodsHttpErrorIntegrationTest.java` | RED — HTTP error response scenarios extending BaseIntegrationTest |
+| 15 | `src/test/java/info/jab/ms/integration/GreekGodsHttp500Then200IntegrationTest.java`, `GreekGodsInvalidJsonIntegrationTest.java` | RED — HTTP / malformed JSON scenarios extending BaseIntegrationTest |
 
 ## Notes
 
